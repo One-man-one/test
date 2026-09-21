@@ -117,5 +117,15 @@
 <div class="toast" id="toast"></div>
 
 <script src="app.js"></script>
+  <script>
+setTimeout(function(){
+  var s = document.getElementById('cardStack');
+  var html = s ? s.innerHTML.substring(0, 200) : 'cardStack غير موجود';
+  var alert = document.createElement('div');
+  alert.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#0af;color:#fff;padding:10px;font-size:11px;z-index:9999;word-break:break-all;direction:ltr';
+  alert.textContent = 'Height: ' + (s?s.offsetHeight:'?') + ' | Children: ' + (s?s.children.length:'?') + ' | HTML: ' + html;
+  document.body.appendChild(alert);
+}, 1500);
+  </script>
 </body>
 </html>
