@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0a0a0a">
 <title>منصة زواج - نموذج</title>
-<link rel="manifest" id="manifestLink">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='72' font-size='50' text-anchor='middle' fill='%23d4af37'%3E❤%3C/text%3E%3C/svg%3E">
 <style>
   :root{
     --bg:#0a0a0a;--bg2:#141414;--card:#1a1a1a;--border:#2a2a2a;
@@ -29,7 +27,6 @@
 
   .view-header{text-align:center;margin-bottom:20px}
   .view-header h1{font-size:26px;color:var(--gold);font-weight:800;line-height:1.3;margin-bottom:6px}
-  .view-header p{font-size:13px;color:var(--text-dim)}
   .tabs{display:flex;gap:8px;margin-bottom:14px}
   .tab{flex:1;padding:10px;border-radius:30px;border:1px solid var(--border);background:var(--bg2);color:var(--text-dim);font-size:13px;font-weight:600;cursor:pointer;text-align:center}
   .tab.active{background:var(--gold);color:#000;border-color:var(--gold)}
@@ -87,7 +84,7 @@
 </head>
 <body>
 
-<div id="mainScreen" class="screen active">
+<div class="screen active">
   <div class="top-bar">
     <div class="brand">❤️ منصة زواج</div>
     <div class="actions">
@@ -114,7 +111,7 @@
 
 <script>
 // ================== البيانات ==================
-const profiles = [
+var profiles = [
   {
     id:'SK-75001',
     name:'عبدالله',
@@ -157,188 +154,188 @@ const profiles = [
     maritalStatus:'لم يسبق لها الزواج', height:170, weight:65, build:'متوسط', eyes:'عسلي', hair:'بني داكن', skin:'قمحية',
     religion:'الإسلام — سنة', marriageType:['زواج شرعي 🕌'], education:'دكتوراه', work:'طبيبة',
     smoking:'غير مدخنة', languages:'العربية، الفرنسية، الإنجليزية', bio:'أحب الطب والسفر.'
-  },
+  }
 ];
 
-const savedProfiles = new Set();
-const interestedProfiles = new Set();
-
-// ===== Manifest =====
-const manifest = {
-  name:'منصة زواج', short_name:'زواج',
-  start_url:'.', display:'standalone',
-  background_color:'#0a0a0a', theme_color:'#0a0a0a', orientation:'portrait',
-  icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='72' font-size='50' text-anchor='middle' fill='%23d4af37'%3E%E2%9D%A4%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]
-};
-document.getElementById('manifestLink').href = URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}));
-
-// ===== Service Worker مع إصدار =====
-if ('serviceWorker' in navigator) {
-  const VERSION = 'v1';
-  navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
-  const swCode = `
-    const V='${VERSION}';
-    self.addEventListener('install',e=>self.skipWaiting());
-    self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-    self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))});
-  `;
-  navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode],{type:'application/javascript'}))).catch(()=>{});
-}
+var savedProfiles = [];
+var interestedProfiles = [];
 
 // ================== التنقل ==================
-let currentSection = 'browse';
+var currentSection = 'browse';
 
 function showSection(section) {
   currentSection = section;
-  document.querySelectorAll('.nav-item').forEach(btn => btn.classList.toggle('active', btn.dataset.section === section));
+  var navs = document.querySelectorAll('.nav-item');
+  for (var i = 0; i < navs.length; i++) {
+    navs[i].classList.toggle('active', navs[i].getAttribute('data-section') === section);
+  }
   renderContent();
 }
 
 function renderContent() {
-  const area = document.getElementById('contentArea');
-  switch(currentSection) {
-    case 'browse': area.innerHTML = renderBrowse(); break;
-    case 'matches': area.innerHTML = renderEmpty('💚','مطابقاتي','لا توجد مطابقات حتى الآن. أرسل اهتمامك للملفات التي تعجبك.'); break;
-    case 'notifications': area.innerHTML = renderEmpty('🔔','الإشعارات','لديك إشعار جديد: تمت إضافة ملف شخصي جديد.'); break;
-    case 'profile': area.innerHTML = renderProfile(); break;
-    case 'help': area.innerHTML = renderEmpty('❓','المساعدة','للتواصل مع الدعم: support@example.com'); break;
-  }
+  var area = document.getElementById('contentArea');
+  if (currentSection === 'browse') area.innerHTML = renderBrowse();
+  else if (currentSection === 'matches') area.innerHTML = renderEmpty('💚','مطابقاتي','لا توجد مطابقات حتى الآن. أرسل اهتمامك للملفات التي تعجبك.');
+  else if (currentSection === 'notifications') area.innerHTML = renderEmpty('🔔','الإشعارات','لديك إشعار جديد: تمت إضافة ملف شخصي جديد.');
+  else if (currentSection === 'profile') area.innerHTML = renderProfile();
+  else if (currentSection === 'help') area.innerHTML = renderEmpty('❓','المساعدة','للتواصل مع الدعم: support@example.com');
 }
 
 // ================== بطاقة الملف ==================
 function renderBrowse() {
-  const cards = profiles.map(p => renderCard(p)).join('');
-  return `
-    <div class="view-header"><h1>ملفات شخصية<br>مجهولة الهوية</h1></div>
-    <div class="tabs">
-      <div class="tab active">جميع الملفات <span class="count-badge">${profiles.length}</span></div>
-      <div class="tab">قائمتي المختارة <span class="count-badge">${savedProfiles.size}</span></div>
-    </div>
-    <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;text-align:center">${profiles.length} ملفاً شخصياً</p>
-    ${cards}
-  `;
+  var cards = '';
+  for (var i = 0; i < profiles.length; i++) {
+    cards += renderCard(profiles[i]);
+  }
+  return '' +
+    '<div class="view-header"><h1>ملفات شخصية<br>مجهولة الهوية</h1></div>' +
+    '<div class="tabs">' +
+      '<div class="tab active">جميع الملفات <span class="count-badge">' + profiles.length + '</span></div>' +
+      '<div class="tab">قائمتي المختارة <span class="count-badge">' + savedProfiles.length + '</span></div>' +
+    '</div>' +
+    '<p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;text-align:center">' + profiles.length + ' ملفاً شخصياً</p>' +
+    cards;
 }
 
 function renderCard(p) {
-  const saved = savedProfiles.has(p.id);
-  const interested = interestedProfiles.has(p.id);
-  const displayName = p.name ? `👤 ${p.name}، ${p.age}` : `${p.id}`;
-  const marriageTypes = p.marriageType.map(m => `<span style="display:inline-block;background:var(--gold-dim);color:var(--gold-light);padding:3px 8px;border-radius:8px;font-size:11px;margin:2px">${m}</span>`).join('');
+  var saved = savedProfiles.indexOf(p.id) !== -1;
+  var interested = interestedProfiles.indexOf(p.id) !== -1;
 
-  return `
-    <div class="profile-card" onclick="openModal('${p.id}')">
-      <div class="card-head">
-        <div>
-          <div class="card-id">${p.id}</div>
-          <div class="card-age">${p.age} سنة</div>
-        </div>
-        <div class="card-avatar">${p.emoji}</div>
-      </div>
+  var marriageTypes = '';
+  for (var i = 0; i < p.marriageType.length; i++) {
+    marriageTypes += '<span style="display:inline-block;background:var(--gold-dim);color:var(--gold-light);padding:3px 8px;border-radius:8px;font-size:11px;margin:2px">' + p.marriageType[i] + '</span>';
+  }
 
-      ${p.name ? `<div style="text-align:center;font-size:17px;font-weight:700;color:var(--gold-light);margin:6px 0">👤 ${p.name}</div>` : ''}
-      <div class="card-location">${p.city}، ${p.country} ${p.flag}</div>
-      <div class="card-nationality">${p.nationality} • آخر ظهور ${p.lastSeen}</div>
+  var nameBlock = p.name ? '<div style="text-align:center;font-size:17px;font-weight:700;color:var(--gold-light);margin:6px 0">👤 ' + p.name + '</div>' : '';
+  var bioBlock = p.bio ? '<div class="section-label">📝 نبذة</div><div class="bio-box">' + p.bio + '</div>' : '';
 
-      <div class="section-label">📐 المواصفات الجسدية</div>
-      <div class="card-details">
-        <div class="detail"><span class="label">📏 الطول</span><span class="value">${p.height} سم</span></div>
-        <div class="detail"><span class="label">⚖️ الوزن</span><span class="value">${p.weight} كجم</span></div>
-        <div class="detail"><span class="label">🧍 البنية</span><span class="value">${p.build}</span></div>
-        <div class="detail"><span class="label">👁️ العينان</span><span class="value">${p.eyes}</span></div>
-        <div class="detail"><span class="label">💇 الشعر</span><span class="value">${p.hair}</span></div>
-        <div class="detail"><span class="label">🎨 البشرة</span><span class="value">${p.skin}</span></div>
-      </div>
+  return '' +
+    '<div class="profile-card" onclick="openModal(\'' + p.id + '\')">' +
+      '<div class="card-head">' +
+        '<div><div class="card-id">' + p.id + '</div><div class="card-age">' + p.age + ' سنة</div></div>' +
+        '<div class="card-avatar">' + p.emoji + '</div>' +
+      '</div>' +
+      nameBlock +
+      '<div class="card-location">' + p.city + '، ' + p.country + ' ' + p.flag + '</div>' +
+      '<div class="card-nationality">' + p.nationality + ' • آخر ظهور ' + p.lastSeen + '</div>' +
 
-      <div class="section-label">🕌 الدين والحالة</div>
-      <div class="card-details">
-        <div class="detail"><span class="label">🕌 الدين</span><span class="value">${p.religion}</span></div>
-        <div class="detail"><span class="label">💕 الحالة</span><span class="value">${p.maritalStatus}</span></div>
-        <div class="detail full"><span class="label">💍 نوع الزواج المقبول</span><span class="value">${marriageTypes}</span></div>
-      </div>
+      '<div class="section-label">📐 المواصفات الجسدية</div>' +
+      '<div class="card-details">' +
+        '<div class="detail"><span class="label">📏 الطول</span><span class="value">' + p.height + ' سم</span></div>' +
+        '<div class="detail"><span class="label">⚖️ الوزن</span><span class="value">' + p.weight + ' كجم</span></div>' +
+        '<div class="detail"><span class="label">🧍 البنية</span><span class="value">' + p.build + '</span></div>' +
+        '<div class="detail"><span class="label">👁️ العينان</span><span class="value">' + p.eyes + '</span></div>' +
+        '<div class="detail"><span class="label">💇 الشعر</span><span class="value">' + p.hair + '</span></div>' +
+        '<div class="detail"><span class="label">🎨 البشرة</span><span class="value">' + p.skin + '</span></div>' +
+      '</div>' +
 
-      <div class="section-label">📖 التعليم والعمل</div>
-      <div class="card-details">
-        <div class="detail"><span class="label">📖 المؤهل</span><span class="value">${p.education}</span></div>
-        <div class="detail"><span class="label">💼 المهنة</span><span class="value">${p.work}</span></div>
-        <div class="detail"><span class="label">🚭 التدخين</span><span class="value">${p.smoking}</span></div>
-        <div class="detail"><span class="label">🗣️ اللغات</span><span class="value">${p.languages}</span></div>
-      </div>
+      '<div class="section-label">🕌 الدين والحالة</div>' +
+      '<div class="card-details">' +
+        '<div class="detail"><span class="label">🕌 الدين</span><span class="value">' + p.religion + '</span></div>' +
+        '<div class="detail"><span class="label">💕 الحالة</span><span class="value">' + p.maritalStatus + '</span></div>' +
+        '<div class="detail full"><span class="label">💍 نوع الزواج المقبول</span><span class="value">' + marriageTypes + '</span></div>' +
+      '</div>' +
 
-      ${p.bio ? `<div class="section-label">📝 نبذة</div><div class="bio-box">${p.bio}</div>` : ''}
+      '<div class="section-label">📖 التعليم والعمل</div>' +
+      '<div class="card-details">' +
+        '<div class="detail"><span class="label">📖 المؤهل</span><span class="value">' + p.education + '</span></div>' +
+        '<div class="detail"><span class="label">💼 المهنة</span><span class="value">' + p.work + '</span></div>' +
+        '<div class="detail"><span class="label">🚭 التدخين</span><span class="value">' + p.smoking + '</span></div>' +
+        '<div class="detail"><span class="label">🗣️ اللغات</span><span class="value">' + p.languages + '</span></div>' +
+      '</div>' +
 
-      <div class="card-actions" onclick="event.stopPropagation()">
-        <button class="btn-interest" onclick="sendInterest('${p.id}')" ${interested?'style="background:var(--border);color:var(--text-dim)"':''}>
-          ${interested ? '✓ تم الإرسال' : 'إرسال اهتمام'}
-        </button>
-        <button class="btn-save" onclick="toggleSave('${p.id}')" style="${saved?'background:var(--gold-dim);border-color:var(--gold)':''}">
-          ${saved ? '★' : '☆'}
-        </button>
-      </div>
-    </div>
-  `;
+      bioBlock +
+
+      '<div class="card-actions" onclick="event.stopPropagation()">' +
+        '<button class="btn-interest" onclick="sendInterest(\'' + p.id + '\')" ' + (interested ? 'style="background:var(--border);color:var(--text-dim)"' : '') + '>' +
+          (interested ? '✓ تم الإرسال' : 'إرسال اهتمام') +
+        '</button>' +
+        '<button class="btn-save" onclick="toggleSave(\'' + p.id + '\')" style="' + (saved ? 'background:var(--gold-dim);border-color:var(--gold)' : '') + '">' +
+          (saved ? '★' : '☆') +
+        '</button>' +
+      '</div>' +
+    '</div>';
 }
 
 function renderEmpty(icon, title, desc) {
-  return `<div class="empty-state"><div class="big-icon">${icon}</div><h3>${title}</h3><p>${desc}</p></div>`;
+  return '<div class="empty-state"><div class="big-icon">' + icon + '</div><h3>' + title + '</h3><p>' + desc + '</p></div>';
 }
 
 function renderProfile() {
-  return `
-    <div class="view-header"><h1>ملفي الشخصي</h1></div>
-    <div class="profile-card">
-      <div class="card-head">
-        <div><div class="card-id">SK-00000</div><div class="card-age">أنا</div></div>
-        <div class="card-avatar">👤</div>
-      </div>
-      <div class="card-details">
-        <div class="detail"><span class="label">الحالة</span><span class="value">نشط</span></div>
-        <div class="detail"><span class="label">الإعجابات المستلمة</span><span class="value">0</span></div>
-        <div class="detail"><span class="label">الإعجابات المرسلة</span><span class="value">${interestedProfiles.size}</span></div>
-        <div class="detail"><span class="label">المحفوظات</span><span class="value">${savedProfiles.size}</span></div>
-      </div>
-    </div>
-    <button class="btn-interest" style="margin-top:16px" onclick="showToast('تعديل الملف قريباً')">تعديل الملف الشخصي</button>
-  `;
+  return '' +
+    '<div class="view-header"><h1>ملفي الشخصي</h1></div>' +
+    '<div class="profile-card">' +
+      '<div class="card-head">' +
+        '<div><div class="card-id">SK-00000</div><div class="card-age">أنا</div></div>' +
+        '<div class="card-avatar">👤</div>' +
+      '</div>' +
+      '<div class="card-details">' +
+        '<div class="detail"><span class="label">الحالة</span><span class="value">نشط</span></div>' +
+        '<div class="detail"><span class="label">الإعجابات المستلمة</span><span class="value">0</span></div>' +
+        '<div class="detail"><span class="label">الإعجابات المرسلة</span><span class="value">' + interestedProfiles.length + '</span></div>' +
+        '<div class="detail"><span class="label">المحفوظات</span><span class="value">' + savedProfiles.length + '</span></div>' +
+      '</div>' +
+    '</div>' +
+    '<button class="btn-interest" style="margin-top:16px" onclick="showToast(\'تعديل الملف قريباً\')">تعديل الملف الشخصي</button>';
 }
 
 // ================== التفاعلات ==================
 function sendInterest(id) {
-  if (interestedProfiles.has(id)) { showToast('تم إرسال اهتمامك مسبقاً'); return; }
-  interestedProfiles.add(id);
+  if (interestedProfiles.indexOf(id) !== -1) { showToast('تم إرسال اهتمامك مسبقاً'); return; }
+  interestedProfiles.push(id);
   showToast('✓ تم إرسال اهتمامك');
   renderContent();
 }
 
 function toggleSave(id) {
-  if (savedProfiles.has(id)) { savedProfiles.delete(id); showToast('تمت الإزالة من القائمة'); }
-  else { savedProfiles.add(id); showToast('★ تم الحفظ في القائمة المختصرة'); }
+  var idx = savedProfiles.indexOf(id);
+  if (idx !== -1) { savedProfiles.splice(idx, 1); showToast('تمت الإزالة من القائمة'); }
+  else { savedProfiles.push(id); showToast('★ تم الحفظ في القائمة المختصرة'); }
   renderContent();
 }
 
 function openModal(id) {
-  const p = profiles.find(x => x.id === id);
+  var p = null;
+  for (var i = 0; i < profiles.length; i++) { if (profiles[i].id === id) { p = profiles[i]; break; } }
   if (!p) return;
-  const marriageTypes = p.marriageType.map(m => `<span style="display:inline-block;background:var(--gold-dim);color:var(--gold-light);padding:3px 8px;border-radius:8px;font-size:11px;margin:2px">${m}</span>`).join('');
 
-  document.getElementById('modalContent').innerHTML = `
-    <h2>${p.name ? '👤 '+p.name : p.id}</h2>
-    <div class="sub">${p.age} سنة • ${p.city}، ${p.country} ${p.flag} • ${p.nationality}</div>
+  var marriageTypes = '';
+  for (var j = 0; j < p.marriageType.length; j++) {
+    marriageTypes += '<span style="display:inline-block;background:var(--gold-dim);color:var(--gold-light);padding:3px 8px;border-radius:8px;font-size:11px;margin:2px">' + p.marriageType[j] + '</span>';
+  }
 
-    <div class="section-label">📐 المواصفات الجسدية</div>
-    <div class="card-details">
-      <div class="detail"><span class="label">📏 الطول</span><span class="value">${p.height} سم</span></div>
-      <div class="detail"><span class="label">⚖️ الوزن</span><span class="value">${p.weight} كجم</span></div>
-      <div class="detail"><span class="label">🧍 البنية</span><span class="value">${p.build}</span></div>
-      <div class="detail"><span class="label">👁️ العينان</span><span class="value">${p.eyes}</span></div>
-      <div class="detail"><span class="label">💇 الشعر</span><span class="value">${p.hair}</span></div>
-      <div class="detail"><span class="label">🎨 البشرة</span><span class="value">${p.skin}</span></div>
-    </div>
+  var bioBlock = p.bio ? '<div class="section-label">📝 نبذة</div><div class="bio-box">' + p.bio + '</div>' : '';
 
-    <div class="section-label">🕌 الدين والحالة</div>
-    <div class="card-details">
-      <div class="detail"><span class="label">🕌 الدين</span><span class="value">${p.religion}</span></div>
-      <div class="detail"><span class="label">💕 الحالة</span><span class="value">${p.maritalStatus}</span></div>
-      <div class="detail full"><span class="label">💍 نوع الزواج</span><span class="value">${marriageTypes}</span></div>
-    </div>
+  document.getElementById('modalContent').innerHTML = '' +
+    '<h2>' + (p.name ? '👤 ' + p.name : p.id) + '</h2>' +
+    '<div class="sub">' + p.age + ' سنة • ' + p.city + '، ' + p.country + ' ' + p.flag + ' • ' + p.nationality + '</div>' +
 
-    <div clas
+    '<div class="section-label">📐 المواصفات الجسدية</div>' +
+    '<div class="card-details">' +
+      '<div class="detail"><span class="label">📏 الطول</span><span class="value">' + p.height + ' سم</span></div>' +
+      '<div class="detail"><span class="label">⚖️ الوزن</span><span class="value">' + p.weight + ' كجم</span></div>' +
+      '<div class="detail"><span class="label">🧍 البنية</span><span class="value">' + p.build + '</span></div>' +
+      '<div class="detail"><span class="label">👁️ العينان</span><span class="value">' + p.eyes + '</span></div>' +
+      '<div class="detail"><span class="label">💇 الشعر</span><span class="value">' + p.hair + '</span></div>' +
+      '<div class="detail"><span class="label">🎨 البشرة</span><span class="value">' + p.skin + '</span></div>' +
+    '</div>' +
+
+    '<div class="section-label">🕌 الدين والحالة</div>' +
+    '<div class="card-details">' +
+      '<div class="detail"><span class="label">🕌 الدين</span><span class="value">' + p.religion + '</span></div>' +
+      '<div class="detail"><span class="label">💕 الحالة</span><span class="value">' + p.maritalStatus + '</span></div>' +
+      '<div class="detail full"><span class="label">💍 نوع الزواج</span><span class="value">' + marriageTypes + '</span></div>' +
+    '</div>' +
+
+    '<div class="section-label">📖 التعليم والعمل</div>' +
+    '<div class="card-details">' +
+      '<div class="detail"><span class="label">📖 المؤهل</span><span class="value">' + p.education + '</span></div>' +
+      '<div class="detail"><span class="label">💼 المهنة</span><span class="value">' + p.work + '</span></div>' +
+      '<div class="detail"><span class="label">🚭 التدخين</span><span class="value">' + p.smoking + '</span></div>' +
+      '<div class="detail"><span class="label">🗣️ اللغات</span><span class="value">' + p.languages + '</span></div>' +
+    '</div>' +
+
+    bioBlock +
+
+    '<div class="modal-actions">' +
+      '<button class="btn-interest" onclick="sendInterest(\'' + p.id + '\');closeModal()">إرسال اهتمام</
