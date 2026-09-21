@@ -2,25 +2,424 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>اختبار</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+<title>منصة زواج - نموذج</title>
+<style>
+  :root{
+    --bg:#0a0a0a;--bg2:#141414;--card:#1a1a1a;--border:#2a2a2a;
+    --gold:#d4af37;--gold-light:#e8c96a;--gold-dim:rgba(212,175,55,.15);
+    --text:#f0f0f0;--text-dim:#999;--radius:16px;
+  }
+  *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
+  .screen{display:flex;height:100vh;height:100dvh;flex-direction:column}
+
+  .top-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0}
+  .top-bar .brand{font-size:18px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:8px}
+  .top-bar .actions{display:flex;gap:12px;align-items:center}
+  .icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;font-size:16px}
+  .badge{position:absolute;top:-4px;left:-4px;background:#e74c3c;color:#fff;font-size:10px;padding:2px 5px;border-radius:8px;font-weight:700}
+
+  .content{flex:1;overflow-y:auto;padding:16px;padding-bottom:80px}
+
+  .view-header{text-align:center;margin-bottom:20px}
+  .view-header h1{font-size:26px;color:var(--gold);font-weight:800;line-height:1.3}
+  .tabs{display:flex;gap:8px;margin-bottom:14px}
+  .tab{flex:1;padding:10px;border-radius:30px;border:1px solid var(--border);background:var(--bg2);color:var(--text-dim);font-size:13px;font-weight:600;text-align:center}
+  .tab.active{background:var(--gold);color:#000;border-color:var(--gold)}
+
+  .profile-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+  .card-id{font-size:13px;color:var(--gold);font-weight:700}
+  .card-age{font-size:13px;color:var(--text-dim)}
+  .card-location{font-size:14px;font-weight:600;text-align:center;margin-bottom:2px}
+  .card-nationality{font-size:12px;color:var(--text-dim);text-align:center}
+  .card-avatar{width:60px;height:60px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;background:var(--bg2);font-size:28px;flex-shrink:0}
+
+  .section-label{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+  .card-details{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+  .detail{display:flex;justify-content:space-between;font-size:13px;gap:8px}
+  .detail.full{grid-column:1/-1}
+  .detail .label{color:var(--text-dim)}
+  .detail .value{color:var(--text);font-weight:600}
+
+  .bio-box{background:var(--bg2);border-right:2px solid var(--gold);padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.7;margin-top:8px}
+
+  .card-actions{display:flex;gap:10px;margin-top:14px}
+  .btn-interest{flex:1;padding:12px;border-radius:30px;border:none;background:var(--gold);color:#000;font-weight:700;font-size:14px;cursor:pointer}
+  .btn-save{width:48px;height:48px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100}
+  .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--text-dim);font-size:10px;cursor:pointer;padding:4px 12px;flex:1;position:relative}
+  .nav-item.active{color:var(--gold)}
+  .nav-icon{font-size:20px}
+  .nav-badge{position:absolute;top:0;left:50%;background:#e74c3c;color:#fff;font-size:9px;padding:1px 4px;border-radius:8px;font-weight:700}
+
+  .empty-state{text-align:center;padding:60px 20px;color:var(--text-dim)}
+  .empty-state .big-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+  .empty-state h3{color:var(--gold);font-size:18px;margin-bottom:8px}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:flex-end;z-index:200}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--card);width:100%;max-height:90vh;border-radius:24px 24px 0 0;padding:20px;overflow-y:auto}
+  .modal h2{color:var(--gold);font-size:20px;margin-bottom:4px}
+  .modal .sub{color:var(--text-dim);font-size:13px;margin-bottom:16px}
+  .modal-actions{display:flex;gap:10px;padding-top:14px;margin-top:10px}
+  .btn-close-modal{width:100%;padding:14px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:14px;cursor:pointer}
+
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--gold);color:#000;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:600;transition:transform .3s;z-index:300;max-width:90%;text-align:center}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  #errorBox{display:none;position:fixed;top:0;left:0;right:0;background:#c00;color:#fff;padding:12px;font-size:12px;z-index:9999;direction:ltr;font-family:monospace;white-space:pre-wrap;max-height:50vh;overflow:auto}
+</style>
 </head>
-<body style="background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px">
-<h1 style="color:#d4af37">اختبار JavaScript</h1>
-<div id="output" style="margin-top:20px;font-size:16px;line-height:2"></div>
+<body>
+
+<div id="errorBox"></div>
+
+<div class="screen">
+  <div class="top-bar">
+    <div class="brand">❤️ منصة زواج</div>
+    <div class="actions">
+      <button class="icon-btn" onclick="showToast('تصفية متقدمة قريباً')">⚙️</button>
+      <button class="icon-btn" onclick="showToast('بحث قريباً')">🔍</button>
+      <button class="icon-btn" onclick="showSection('notifications')">🔔<span class="badge">1</span></button>
+    </div>
+  </div>
+  <div class="content" id="contentArea">
+    <p style="text-align:center;color:#999;padding:40px">⏳ جاري التحميل...</p>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-item active" onclick="showSection('browse')" data-section="browse"><span class="nav-icon">🔍</span><span>استعراض</span></button>
+    <button class="nav-item" onclick="showSection('matches')" data-section="matches"><span class="nav-icon">💚</span><span>مطابقاتي</span></button>
+    <button class="nav-item" onclick="showSection('notifications')" data-section="notifications"><span class="nav-icon">🔔</span><span>الإشعارات</span><span class="nav-badge">1</span></button>
+    <button class="nav-item" onclick="showSection('profile')" data-section="profile"><span class="nav-icon">👤</span><span>ملفي</span></button>
+    <button class="nav-item" onclick="showSection('help')" data-section="help"><span class="nav-icon">❓</span><span>المساعدة</span></button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal"><div id="modalContent"></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-var output = document.getElementById('output');
+// ============ عرض الأخطاء ============
+window.onerror = function(msg, url, line, col, err) {
+  var box = document.getElementById('errorBox');
+  box.style.display = 'block';
+  box.textContent = '❌ خطأ JS:\n' + msg + '\n\nالسطر: ' + line + ':' + col + '\n\n' + (err && err.stack ? err.stack : '');
+};
+
 try {
-  output.innerHTML += '✅ JavaScript يعمل<br>';
-  var test = 'نص عربي';
-  output.innerHTML += '✅ النص العربي: ' + test + '<br>';
-  var testEmoji = '🕌 زواج';
-  output.innerHTML += '✅ الإيموجي: ' + testEmoji + '<br>';
-  var arr = ['عنصر1','عنصر2','عنصر3'];
-  output.innerHTML += '✅ المصفوفات: ' + arr.length + '<br>';
-  output.innerHTML += '<br><b style="color:#4f4">✓ كل شيء يعمل بشكل صحيح</b>';
+
+// ============ البيانات ============
+var profiles = [
+  {
+    id: 'SK-75001',
+    name: 'عبدالله',
+    age: 19,
+    nationality: 'سوري',
+    city: 'بيروت',
+    country: 'لبنان',
+    flag: '🇱🇧',
+    emoji: '👨',
+    lastSeen: 'الآن',
+    maritalStatus: 'أعزب',
+    height: 190,
+    weight: 66,
+    build: 'نحيف',
+    eyes: 'عسلي',
+    hair: 'أسود',
+    skin: 'داكنة',
+    religion: 'الإسلام - سنة',
+    marriageType: ['زواج شرعي', 'زواج مدني'],
+    education: 'ثانوي',
+    work: 'بلاط',
+    smoking: 'مدخّن',
+    languages: 'العربية',
+    bio: 'أحب العمل وأن يكون لدي زوجة صالحة.'
+  },
+  {
+    id: 'SK-61225',
+    name: '',
+    age: 25,
+    nationality: 'المغرب',
+    city: 'الرياض',
+    country: 'السعودية',
+    flag: '🇸🇦',
+    emoji: '👩',
+    lastSeen: 'قبل ساعة',
+    maritalStatus: 'لم يسبق لها الزواج',
+    height: 166,
+    weight: 52,
+    build: 'متوسط',
+    eyes: 'بني',
+    hair: 'بني',
+    skin: 'فاتحة',
+    religion: 'الإسلام - سنة',
+    marriageType: ['زواج شرعي'],
+    education: 'ماجستير',
+    work: 'مهندسة',
+    smoking: 'غير مدخنة',
+    languages: 'العربية، الفرنسية',
+    bio: 'أحب القراءة والرياضة.'
+  },
+  {
+    id: 'SK-61297',
+    name: '',
+    age: 23,
+    nationality: 'يمنية',
+    city: 'القاهرة',
+    country: 'مصر',
+    flag: '🇪🇬',
+    emoji: '👩‍🦰',
+    lastSeen: 'قبل ساعة',
+    maritalStatus: 'لم يسبق لها الزواج',
+    height: 166,
+    weight: 55,
+    build: 'متوسط',
+    eyes: 'بني',
+    hair: 'أسود',
+    skin: 'قمحية',
+    religion: 'الإسلام - سنة',
+    marriageType: ['زواج شرعي'],
+    education: 'بكالوريوس',
+    work: 'معلمة',
+    smoking: 'غير مدخنة',
+    languages: 'العربية، الإنجليزية',
+    bio: 'أحب التدريس والعمل التطوعي.'
+  },
+  {
+    id: 'SK-70953',
+    name: '',
+    age: 31,
+    nationality: 'المغرب',
+    city: 'الجديدة',
+    country: 'المغرب',
+    flag: '🇲🇦',
+    emoji: '👩‍⚕️',
+    lastSeen: 'قبل 3 ساعات',
+    maritalStatus: 'لم يسبق لها الزواج',
+    height: 170,
+    weight: 65,
+    build: 'متوسط',
+    eyes: 'عسلي',
+    hair: 'بني داكن',
+    skin: 'قمحية',
+    religion: 'الإسلام - سنة',
+    marriageType: ['زواج شرعي'],
+    education: 'دكتوراه',
+    work: 'طبيبة',
+    smoking: 'غير مدخنة',
+    languages: 'العربية، الفرنسية، الإنجليزية',
+    bio: 'أحب الطب والسفر.'
+  }
+];
+
+var savedProfiles = [];
+var interestedProfiles = [];
+var currentSection = 'browse';
+
+// ============ التنقل ============
+function showSection(section) {
+  currentSection = section;
+  var navs = document.querySelectorAll('.nav-item');
+  navs.forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-section') === section);
+  });
+  renderContent();
+}
+
+function renderContent() {
+  var area = document.getElementById('contentArea');
+  if (currentSection === 'browse') {
+    area.innerHTML = renderBrowse();
+  } else if (currentSection === 'matches') {
+    area.innerHTML = renderEmpty('💚', 'مطابقاتي', 'لا توجد مطابقات حتى الآن.');
+  } else if (currentSection === 'notifications') {
+    area.innerHTML = renderEmpty('🔔', 'الإشعارات', 'لديك إشعار جديد.');
+  } else if (currentSection === 'profile') {
+    area.innerHTML = renderProfile();
+  } else if (currentSection === 'help') {
+    area.innerHTML = renderEmpty('❓', 'المساعدة', 'support@example.com');
+  }
+}
+
+// ============ بطاقة الملف ============
+function renderBrowse() {
+  var cards = profiles.map(renderCard).join('');
+  var html = '';
+  html += '<div class="view-header"><h1>ملفات شخصية<br>مجهولة الهوية</h1></div>';
+  html += '<div class="tabs">';
+  html += '<div class="tab active">جميع الملفات (' + profiles.length + ')</div>';
+  html += '<div class="tab">قائمتي المختارة (' + savedProfiles.length + ')</div>';
+  html += '</div>';
+  html += cards;
+  return html;
+}
+
+function renderCard(p) {
+  var saved = savedProfiles.indexOf(p.id) !== -1;
+  var interested = interestedProfiles.indexOf(p.id) !== -1;
+
+  var marriageTags = p.marriageType.map(function(m) {
+    return '<span style="display:inline-block;background:rgba(212,175,55,.15);color:#e8c96a;padding:3px 8px;border-radius:8px;font-size:11px;margin:2px">' + m + '</span>';
+  }).join('');
+
+  var nameBlock = p.name
+    ? '<div style="text-align:center;font-size:17px;font-weight:700;color:#e8c96a;margin:6px 0">👤 ' + p.name + '</div>'
+    : '';
+
+  var bioBlock = p.bio
+    ? '<div class="section-label">📝 نبذة</div><div class="bio-box">' + p.bio + '</div>'
+    : '';
+
+  var html = '';
+  html += '<div class="profile-card">';
+  html += '<div class="card-head">';
+  html += '<div><div class="card-id">' + p.id + '</div><div class="card-age">' + p.age + ' سنة</div></div>';
+  html += '<div class="card-avatar">' + p.emoji + '</div>';
+  html += '</div>';
+  html += nameBlock;
+  html += '<div class="card-location">' + p.city + '، ' + p.country + ' ' + p.flag + '</div>';
+  html += '<div class="card-nationality">' + p.nationality + ' • آخر ظهور ' + p.lastSeen + '</div>';
+
+  html += '<div class="section-label">📐 المواصفات الجسدية</div>';
+  html += '<div class="card-details">';
+  html += '<div class="detail"><span class="label">📏 الطول</span><span class="value">' + p.height + ' سم</span></div>';
+  html += '<div class="detail"><span class="label">⚖️ الوزن</span><span class="value">' + p.weight + ' كجم</span></div>';
+  html += '<div class="detail"><span class="label">🧍 البنية</span><span class="value">' + p.build + '</span></div>';
+  html += '<div class="detail"><span class="label">👁️ العينان</span><span class="value">' + p.eyes + '</span></div>';
+  html += '<div class="detail"><span class="label">💇 الشعر</span><span class="value">' + p.hair + '</span></div>';
+  html += '<div class="detail"><span class="label">🎨 البشرة</span><span class="value">' + p.skin + '</span></div>';
+  html += '</div>';
+
+  html += '<div class="section-label">🕌 الدين والحالة</div>';
+  html += '<div class="card-details">';
+  html += '<div class="detail"><span class="label">🕌 الدين</span><span class="value">' + p.religion + '</span></div>';
+  html += '<div class="detail"><span class="label">💕 الحالة</span><span class="value">' + p.maritalStatus + '</span></div>';
+  html += '<div class="detail full"><span class="label">💍 نوع الزواج</span><span class="value">' + marriageTags + '</span></div>';
+  html += '</div>';
+
+  html += '<div class="section-label">📖 التعليم والعمل</div>';
+  html += '<div class="card-details">';
+  html += '<div class="detail"><span class="label">📖 المؤهل</span><span class="value">' + p.education + '</span></div>';
+  html += '<div class="detail"><span class="label">💼 المهنة</span><span class="value">' + p.work + '</span></div>';
+  html += '<div class="detail"><span class="label">🚭 التدخين</span><span class="value">' + p.smoking + '</span></div>';
+  html += '<div class="detail"><span class="label">🗣️ اللغات</span><span class="value">' + p.languages + '</span></div>';
+  html += '</div>';
+
+  html += bioBlock;
+
+  html += '<div class="card-actions">';
+  if (interested) {
+    html += '<button class="btn-interest" style="background:#2a2a2a;color:#999" onclick="sendInterest(\'' + p.id + '\')">✓ تم الإرسال</button>';
+  } else {
+    html += '<button class="btn-interest" onclick="sendInterest(\'' + p.id + '\')">إرسال اهتمام</button>';
+  }
+  if (saved) {
+    html += '<button class="btn-save" style="background:rgba(212,175,55,.15)" onclick="toggleSave(\'' + p.id + '\')">★</button>';
+  } else {
+    html += '<button class="btn-save" onclick="toggleSave(\'' + p.id + '\')">☆</button>';
+  }
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function renderEmpty(icon, title, desc) {
+  return '<div class="empty-state"><div class="big-icon">' + icon + '</div><h3>' + title + '</h3><p>' + desc + '</p></div>';
+}
+
+function renderProfile() {
+  var html = '';
+  html += '<div class="view-header"><h1>ملفي الشخصي</h1></div>';
+  html += '<div class="profile-card">';
+  html += '<div class="card-details">';
+  html += '<div class="detail"><span class="label">الحالة</span><span class="value">نشط</span></div>';
+  html += '<div class="detail"><span class="label">الإعجابات المرسلة</span><span class="value">' + interestedProfiles.length + '</span></div>';
+  html += '<div class="detail"><span class="label">المحفوظات</span><span class="value">' + savedProfiles.length + '</span></div>';
+  html += '</div></div>';
+  return html;
+}
+
+// ============ التفاعلات ============
+function sendInterest(id) {
+  if (interestedProfiles.indexOf(id) !== -1) {
+    showToast('تم إرسال اهتمامك مسبقاً');
+    return;
+  }
+  interestedProfiles.push(id);
+  showToast('✓ تم إرسال اهتمامك');
+  renderContent();
+}
+
+function toggleSave(id) {
+  var idx = savedProfiles.indexOf(id);
+  if (idx !== -1) {
+    savedProfiles.splice(idx, 1);
+    showToast('تمت الإزالة من القائمة');
+  } else {
+    savedProfiles.push(id);
+    showToast('★ تم الحفظ');
+  }
+  renderContent();
+}
+
+function openModal(id) {
+  var p = profiles.find(function(x) { return x.id === id; });
+  if (!p) return;
+  var marriageTags = p.marriageType.map(function(m) {
+    return '<span style="display:inline-block;background:rgba(212,175,55,.15);color:#e8c96a;padding:3px 8px;border-radius:8px;font-size:11px;margin:2px">' + m + '</span>';
+  }).join('');
+
+  var html = '';
+  html += '<h2>' + (p.name ? '👤 ' + p.name : p.id) + '</h2>';
+  html += '<div class="sub">' + p.age + ' سنة • ' + p.city + '، ' + p.country + '</div>';
+  html += '<div class="section-label">📐 المواصفات</div>';
+  html += '<div class="card-details">';
+  html += '<div class="detail"><span class="label">الطول</span><span class="value">' + p.height + ' سم</span></div>';
+  html += '<div class="detail"><span class="label">الوزن</span><span class="value">' + p.weight + ' كجم</span></div>';
+  html += '<div class="detail"><span class="label">البنية</span><span class="value">' + p.build + '</span></div>';
+  html += '<div class="detail"><span class="label">العينان</span><span class="value">' + p.eyes + '</span></div>';
+  html += '<div class="detail"><span class="label">الشعر</span><span class="value">' + p.hair + '</span></div>';
+  html += '<div class="detail"><span class="label">البشرة</span><span class="value">' + p.skin + '</span></div>';
+  html += '</div>';
+  html += '<div class="section-label">💍 الزواج</div>';
+  html += '<div class="card-details"><div class="detail full"><span class="value">' + marriageTags + '</span></div></div>';
+  if (p.bio) {
+    html += '<div class="section-label">📝 نبذة</div><div class="bio-box">' + p.bio + '</div>';
+  }
+  html += '<div class="modal-actions">';
+  html += '<button class="btn-interest" onclick="sendInterest(\'' + p.id + '\');closeModal()">إرسال اهتمام</button>';
+  html += '<button class="btn-close-modal" onclick="closeModal()">إغلاق</button>';
+  html += '</div>';
+
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2200);
+}
+
+// ============ تشغيل ============
+renderContent();
+
 } catch(e) {
-  output.innerHTML += '<span style="color:#f55">❌ خطأ: ' + e.message + '</span>';
+  var box = document.getElementById('errorBox');
+  box.style.display = 'block';
+  box.textContent = '❌ خطأ:\n' + e.message + '\n\n' + (e.stack || '');
 }
 </script>
 </body>
