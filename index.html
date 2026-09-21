@@ -35,15 +35,15 @@ body{background:#0a0a0a;color:#f0f0f0;overflow:hidden;position:fixed;top:0;left:
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);display:none;align-items:flex-end;z-index:200}
 .modal.on{display:flex}
 .min{background:#1a1a1a;width:100%;max-height:88vh;border-radius:24px 24px 0 0;padding:20px;overflow-y:auto;border-top:2px solid #d4af37}
-.min h2{color:#d4af37;text-align:center;margin-bottom:6px}
+.min h2{color:#d4af37;text-align:center;margin-bottom:6px;font-size:20px}
 .min .sub{color:#888;text-align:center;font-size:13px;margin-bottom:16px}
 .sec{font-size:11px;color:#d4af37;font-weight:700;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid #2a2a2a}
 .mr{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px}
 .mr .l{color:#888}
-.mr .v{font-weight:600}
-.cl{margin-top:16px;width:100%;padding:14px;border-radius:30px;border:1px solid #333;background:transparent;color:#f0f0f0;font-size:14px;cursor:pointer}
+.mr .v{font-weight:600;text-align:left}
+.cl{margin-top:12px;width:100%;padding:14px;border-radius:30px;border:1px solid #333;background:transparent;color:#f0f0f0;font-size:14px;cursor:pointer}
 .gb{background:#d4af37;color:#000;font-weight:700;border:none}
-.mp{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:500;flex-direction:column;gap:20px}
+.mp{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);display:none;align-items:center;justify-content:center;z-index:500;flex-direction:column;gap:20px;text-align:center;padding:20px}
 .mp.on{display:flex}
 .mp h1{color:#d4af37;font-size:36px}
 .mp .em{font-size:80px}
@@ -55,15 +55,31 @@ body{background:#0a0a0a;color:#f0f0f0;overflow:hidden;position:fixed;top:0;left:
 .mc{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer}
 .mc .a{width:50px;height:50px;border-radius:50%;border:2px solid #d4af37;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
 .bm{background:#22c55e;color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;margin-right:auto}
+.fld{margin-bottom:12px}
+.fld label{display:block;color:#888;font-size:12px;margin-bottom:4px}
+.fld input,.fld select{width:100%;padding:10px;background:#141414;border:1px solid #333;border-radius:10px;color:#f0f0f0;font-size:14px}
+.login{position:fixed;top:0;left:0;right:0;bottom:0;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:30px;z-index:1000;text-align:center}
+.login h1{color:#d4af37;font-size:28px}
+.login p{color:#888;font-size:14px;margin-bottom:20px}
+.login .btn2{padding:14px 30px;border-radius:30px;border:none;background:#d4af37;color:#000;font-weight:700;font-size:15px;cursor:pointer;width:100%;max-width:300px}
+.login input{width:100%;max-width:300px;padding:14px;background:#141414;border:1px solid #333;border-radius:30px;color:#fff;font-size:15px;text-align:center}
 </style>
 </head>
 <body>
+
+<div class="login" id="loginScreen">
+  <h1>❤️ منصة زواج</h1>
+  <p>أدخل اسمك للبدء</p>
+  <input id="loginName" placeholder="اسمك" autocomplete="off">
+  <button class="btn2" onclick="doLogin()">تسجيل الدخول</button>
+  <p style="font-size:11px;margin-top:20px">بياناتك محفوظة على جهازك فقط</p>
+</div>
 
 <div class="top">
   <b>❤️ منصة زواج</b>
   <div style="display:flex;gap:8px;align-items:center">
     <span id="counter" style="color:#888;font-size:12px"></span>
-    <button class="ico" onclick="toast('تصفية قريباً')">⚙️</button>
+    <button class="ico" onclick="openFilter()">⚙️</button>
   </div>
 </div>
 
@@ -81,6 +97,7 @@ body{background:#0a0a0a;color:#f0f0f0;overflow:hidden;position:fixed;top:0;left:
 </div>
 
 <div class="modal" id="m" onclick="if(event.target===this)cm()"><div class="min"><div id="mc"></div></div></div>
+<div class="modal" id="filtM" onclick="if(event.target===this)cf()"><div class="min"><div id="filtC"></div></div></div>
 
 <div class="mp" id="mp" onclick="this.classList.remove('on')">
   <div class="em">💚🎉💚</div>
@@ -91,144 +108,6 @@ body{background:#0a0a0a;color:#f0f0f0;overflow:hidden;position:fixed;top:0;left:
 
 <div class="tst" id="tst"></div>
 
-<script>
-var D=[["SK-75001","عبدالله",19,"سوري","بيروت","لبنان","🇱🇧","👨",190,66,"نحيف","عسلي","أسود","داكنة","سني","أعزب",["شرعي","مدني"],"ثانوي","بلاط","مدخّن","العربية","أحب العمل وأن يكون لدي زوجة صالحة"],
-["SK-61225","",25,"مغربية","الرياض","السعودية","🇸🇦","👩",166,52,"متوسط","بني","بني","فاتحة","سنية","عزباء",["شرعي"],"ماجستير","مهندسة","غير مدخنة","العربية","أحب القراءة والرياضة"],
-["SK-61297","",23,"يمنية","القاهرة","مصر","🇪🇬","👩‍🦰",166,55,"متوسط","بني","أسود","قمحية","سنية","عزباء",["شرعي"],"بكالوريوس","معلمة","غير مدخنة","العربية","أحب التدريس"],
-["SK-70953","",31,"مغربية","الجديدة","المغرب","🇲🇦","👩‍⚕️",170,65,"متوسط","عسلي","بني","قمحية","سنية","عزباء",["شرعي"],"دكتوراه","طبيبة","غير مدخنة","العربية","أحب الطب"],
-["SK-72145","فاطمة",27,"تونسية","تونس","تونس","🇹🇳","👩‍🎓",164,54,"نحيف","بني","بني","قمحية","سنية","عزباء",["شرعي"],"ماجستير","مهندسة","غير مدخنة","العربية","أحب الفن"],
-["SK-73412","",29,"مصرية","الإسكندرية","مصر","🇪🇬","👩‍🏫",160,58,"متوسط","بني","أسود","قمحية","سنية","مطلقة",["شرعي"],"بكالوريوس","مدرسة","غير مدخنة","العربية","أبحث عن شريك متفهم"],
-["SK-74125","ياسمين",24,"سورية","إستنبول","تركيا","🇹🇷","👩‍🍳",168,56,"نحيف","عسلي","بني","فاتحة","سنية","عزباء",["شرعي"],"بكالوريوس","صيدلانية","غير مدخنة","العربية","أحب الطبخ"],
-["SK-75890","",32,"أردنية","عمّان","الأردن","🇯🇴","👩‍⚖️",172,62,"متوسط","بني","بني","قمحية","سنية","عزباء",["شرعي"],"ماجستير","محامية","غير مدخنة","العربية","طموحة"],
-["SK-76231","",26,"جزائرية","الجزائر","الجزائر","🇩🇿","👩‍💻",165,55,"متوسط","عسلي","بني","فاتحة","سنية","عزباء",["شرعي"],"بكالوريوس","مبرمجة","غير مدخنة","العربية","أحب التقنية"],
-["SK-77456","مريم",30,"مغربية","الدار البيضاء","المغرب","🇲🇦","👩‍🔬",167,58,"متوسط","بني","أسود","قمحية","سنية","عزباء",["شرعي"],"دكتوراه","باحثة","غير مدخنة","العربية","أحب العلم"],
-["SK-78123","",22,"سعودية","الرياض","السعودية","🇸🇦","👩‍🎨",162,50,"نحيف","بني","أسود","فاتحة","سنية","عزباء",["شرعي"],"بكالوريوس","مصممة","غير مدخنة","العربية","فنانة"],
-["SK-79344","",28,"عراقية","بغداد","العراق","🇮🇶","👩‍⚕️",163,55,"متوسط","عسلي","بني","قمحية","سنية","عزباء",["شرعي"],"بكالوريوس","طبيبة أسنان","غير مدخنة","العربية","أحب عملي"],
-["SK-80156","",33,"مصرية","القاهرة","مصر","🇪🇬","👩‍💼",158,60,"متوسط","بني","بني","قمحية","سنية","مطلقة",["شرعي"],"ماجستير","مديرة","غير مدخنة","العربية","أم لطفل"],
-["SK-81234","",25,"كويتية","الكويت","الكويت","🇰🇼","👩‍🍳",165,52,"نحيف","بني","أسود","فاتحة","سنية","عزباء",["شرعي"],"بكالوريوس","معلمة","غير مدخنة","العربية","أحب الأطفال"],
-["SK-82345","",27,"يمنية","صنعاء","اليمن","🇾🇪","👩‍📚",160,53,"متوسط","بني","أسود","قمحية","سنية","عزباء",["شرعي"],"بكالوريوس","كاتبة","غير مدخنة","العربية","أحب الكتابة"],
-["SK-83001","نورة",26,"سعودية","جدة","السعودية","🇸🇦","👩",163,54,"نحيف","بني","بني","فاتحة","سنية","عزباء",["شرعي"],"بكالوريوس","صيدلانية","غير مدخنة","العربية","أحب الرياضة"],
-["SK-83002","ليلى",24,"مصرية","الإسكندرية","مصر","🇪🇬","👩",161,53,"نحيف","بني","أسود","قمحية","سنية","عزباء",["شرعي"],"بكالوريوس","مصممة أزياء","غير مدخنة","العربية","أحب الموضة"],
-["SK-83003","رنا",29,"أردنية","عمّان","الأردن","🇯🇴","👩‍🎓",167,58,"متوسط","عسلي","بني","قمحية","سنية","عزباء",["شرعي"],"ماجستير","محاسبة","غير مدخنة","العربية","أحب السفر"],
-["SK-83004","هدى",27,"إماراتية","دبي","الإمارات","🇦🇪","👩‍💼",165,55,"متوسط","بني","أسود","فاتحة","سنية","عزباء",["شرعي"],"ماجستير","مديرة","غير مدخنة","العربية","طموحة"],
-["SK-83005","سلمى",25,"مغربية","الرباط","المغرب","🇲🇦","👩‍⚕️",164,54,"نحيف","بني","بني","قمحية","سنية","عزباء",["شرعي"],"دكتوراه","طبيبة أطفال","غير مدخنة","العربية","أحب الأطفال"]];
-var P=D.map(function(r){return{id:r[0],name:r[1],age:r[2],nat:r[3],city:r[4],country:r[5],flag:r[6],emoji:r[7],h:r[8],w:r[9],build:r[10],eyes:r[11],hair:r[12],skin:r[13],religion:r[14],marital:r[15],marriage:r[16],edu:r[17],work:r[18],smoke:r[19],lang:r[20],bio:r[21]};});
-var PL=["SK-61225","SK-72145","SK-77456","SK-79344","SK-83005"];
-var liked=[],skipped=[],matches=[],animating=false;
-try{var s=localStorage.getItem('zw9');if(s){var o=JSON.parse(s);liked=o.l||[];skipped=o.s||[];matches=o.m||[];}}catch(e){}
-function save(){try{localStorage.setItem('zw9',JSON.stringify({l:liked,s:skipped,m:matches}));}catch(e){}}
-
-function showSec(t,b){
-  document.querySelectorAll('.nav button').forEach(function(x){x.classList.remove('on');});
-  if(b)b.classList.add('on');
-  if(t==='browse'){document.querySelector('.deck').style.display='block';document.getElementById('ab').style.display='flex';renderStack();}
-  else{document.getElementById('ab').style.display='none';if(t==='matches')renderM();else renderP();}
-}
-function av(){return P.filter(function(p){return liked.indexOf(p.id)===-1&&skipped.indexOf(p.id)===-1;});}
-function renderStack(){
-  var st=document.getElementById('stack'),a=av();
-  document.getElementById('counter').textContent=a.length+' متبقي';
-  if(!a.length){st.innerHTML='<div class="emp"><h3>انتهت الملفات 🎉</h3><button class="rst" onclick="rstDeck()">إعادة البدء</button></div>';return;}
-  var h='';
-  if(a[2])h+=card(a[2],'b2');
-  if(a[1])h+=card(a[1],'b1');
-  h+=card(a[0],'front');
-  st.innerHTML=h;
-  var t=st.querySelector('.card.front');if(t)swipe(t,a[0]);
-}
-function card(p,c){
-  var tg=p.marriage.map(function(m){return '<span style="background:rgba(212,175,55,.15);color:#e8c96a;padding:3px 8px;border-radius:10px;font-size:11px;margin:2px;display:inline-block">'+m+'</span>';}).join('');
-  var n=p.name?'<div class="nm">'+p.name+'</div>':'<div style="height:10px"></div>';
-  var b=p.bio?'<div class="bio">"'+p.bio+'"</div>':'';
-  return '<div class="card '+c+'"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="color:#d4af37;font-size:13px;font-weight:700">'+p.id+'</div><div style="color:#888;font-size:13px;margin-top:2px">'+p.age+' سنة</div></div><div class="av">'+p.emoji+'</div></div>'+n+'<div class="lc">'+p.city+'، '+p.country+' '+p.flag+'</div>'+
-  '<div class="rw"><span class="l">📏 الطول</span><span class="v">'+p.h+' سم</span></div>'+
-  '<div class="rw"><span class="l">⚖️ الوزن</span><span class="v">'+p.w+' كجم</span></div>'+
-  '<div class="rw"><span class="l">👁️ العينان</span><span class="v">'+p.eyes+'</span></div>'+
-  '<div class="rw"><span class="l">💇 الشعر</span><span class="v">'+p.hair+'</span></div>'+
-  '<div class="rw"><span class="l">💼 المهنة</span><span class="v">'+p.work+'</span></div>'+
-  '<div class="rw"><span class="l">💍 الزواج</span><span class="v">'+tg+'</span></div>'+b+
-  '<div style="text-align:center;color:#666;font-size:11px;margin-top:16px">👆 اضغط للتفاصيل</div></div>';
-}
-function swipe(c,p){
-  var sx=0,cx=0,dr=false,mv=false;
-  c.addEventListener('touchstart',st,{passive:true});
-  c.addEventListener('touchmove',mo,{passive:false});
-  c.addEventListener('touchend',en);
-  c.addEventListener('mousedown',st);
-  document.addEventListener('mousemove',mo);
-  document.addEventListener('mouseup',en);
-  function st(e){if(animating)return;dr=true;mv=false;var pt=e.touches?e.touches[0]:e;sx=pt.clientX;c.style.transition='none';}
-  function mo(e){if(!dr)return;if(e.type==='touchmove')e.preventDefault();var pt=e.touches?e.touches[0]:e;cx=pt.clientX-sx;if(Math.abs(cx)>5)mv=true;c.style.transform='translate('+cx+'px,'+(cx/20)+'px) rotate('+(cx/18)+'deg)';c.style.boxShadow=cx>50?'0 0 30px #22c55e':cx<-50?'0 0 30px #ef4444':'';}
-  function en(e){if(!dr)return;dr=false;if(!mv&&Math.abs(cx)<5){om(p.id);c.style.transform='';c.style.boxShadow='';return;}if(cx>100)out(c,'right',p);else if(cx<-100)out(c,'left',p);else{c.style.transition='transform .3s';c.style.transform='';c.style.boxShadow='';}cx=0;}
-}
-function out(c,d,p){
-  if(animating)return;animating=true;
-  var x=d==='right'?window.innerWidth:-window.innerWidth;
-  c.style.transition='transform .4s,opacity .4s';
-  c.style.transform='translate('+x+'px,0) rotate('+(d==='right'?30:-30)+'deg)';
-  c.style.opacity='0';
-  setTimeout(function(){
-    if(d==='right'){liked.push(p.id);if(PL.indexOf(p.id)!==-1&&matches.indexOf(p.id)===-1){matches.push(p.id);showM(p);}else{toast('❤️ '+(p.name||p.id));}}
-    else{skipped.push(p.id);toast('✕ '+(p.name||p.id));}
-    save();animating=false;renderStack();
-  },350);
-}
-function likeTop(){var a=av();if(!a.length)return;var c=document.querySelector('.card.front');if(c)out(c,'right',a[0]);}
-function skipTop(){var a=av();if(!a.length)return;var c=document.querySelector('.card.front');if(c)out(c,'left',a[0]);}
-function rstDeck(){if(!confirm('إعادة تعيين؟'))return;liked=[];skipped=[];matches=[];save();renderStack();toast('تم');}
-function showM(p){document.getElementById('mt').textContent='أعجبت '+(p.name||p.id)+' وأعجبت بك أيضاً!';document.getElementById('mp').classList.add('on');}
-function renderM(){
-  var st=document.getElementById('stack');
-  var h='<div style="max-width:400px;margin:0 auto;padding:16px;overflow-y:auto;max-height:calc(100vh - 140px)">';
-  h+='<h2 style="color:#d4af37;text-align:center;margin-bottom:16px">💚 مطابقاتي ('+matches.length+')</h2>';
-  if(!matches.length)h+='<p style="text-align:center;color:#888">لا توجد مطابقات بعد.</p>';
-  matches.forEach(function(id){var p=P.find(function(x){return x.id===id;});if(!p)return;h+='<div class="mc" onclick="om(\''+p.id+'\')"><div class="a">'+p.emoji+'</div><div><div style="color:#e8c96a;font-weight:700">'+(p.name||p.id)+'</div><div style="color:#888;font-size:12px">'+p.age+' سنة • '+p.city+'</div></div><span class="bm">تطابق</span></div>';});
-  h+='</div>';
-  st.innerHTML=h;
-  document.getElementById('counter').textContent=matches.length+' مطابقة';
-}
-function renderP(){
-  var st=document.getElementById('stack');
-  var h='<div style="max-width:400px;margin:0 auto;padding:16px">';
-  h+='<h2 style="color:#d4af37;text-align:center;margin-bottom:16px">ملفي</h2>';
-  h+='<div class="rw"><span class="l">الإعجابات المرسلة</span><span class="v">'+liked.length+'</span></div>';
-  h+='<div class="rw"><span class="l">المتخطاة</span><span class="v">'+skipped.length+'</span></div>';
-  h+='<div class="rw"><span class="l">المطابقات</span><span class="v">'+matches.length+'</span></div>';
-  h+='<div class="rw"><span class="l">المتبقية</span><span class="v">'+av().length+'</span></div>';
-  h+='<button class="cl" onclick="rstDeck()">🔄 إعادة تعيين</button>';
-  h+='</div>';
-  st.innerHTML=h;document.getElementById('counter').textContent='';
-}
-function om(id){
-  var p=P.find(function(x){return x.id===id;});if(!p)return;
-  var tg=p.marriage.map(function(m){return '<span style="background:rgba(212,175,55,.15);color:#e8c96a;padding:3px 10px;border-radius:12px;font-size:11px;margin:2px;display:inline-block">'+m+'</span>';}).join('');
-  var h='<h2>'+(p.name?'👤 '+p.name:p.id)+'</h2><div class="sub">'+p.age+' سنة • '+p.city+'، '+p.country+' '+p.flag+'</div>';
-  h+='<div class="sec">📐 المواصفات</div>';
-  h+='<div class="mr"><span class="l">📏 الطول</span><span class="v">'+p.h+' سم</span></div>';
-  h+='<div class="mr"><span class="l">⚖️ الوزن</span><span class="v">'+p.w+' كجم</span></div>';
-  h+='<div class="mr"><span class="l">🧍 البنية</span><span class="v">'+p.build+'</span></div>';
-  h+='<div class="mr"><span class="l">👁️ العينان</span><span class="v">'+p.eyes+'</span></div>';
-  h+='<div class="mr"><span class="l">💇 الشعر</span><span class="v">'+p.hair+'</span></div>';
-  h+='<div class="mr"><span class="l">🎨 البشرة</span><span class="v">'+p.skin+'</span></div>';
-  h+='<div class="sec">🕌 الدين والحالة</div>';
-  h+='<div class="mr"><span class="l">🕌 الدين</span><span class="v">'+p.religion+'</span></div>';
-  h+='<div class="mr"><span class="l">💕 الحالة</span><span class="v">'+p.marital+'</span></div>';
-  h+='<div class="mr"><span class="l">💍 الزواج</span><span class="v">'+tg+'</span></div>';
-  h+='<div class="sec">📖 التعليم والعمل</div>';
-  h+='<div class="mr"><span class="l">📖 المؤهل</span><span class="v">'+p.edu+'</span></div>';
-  h+='<div class="mr"><span class="l">💼 المهنة</span><span class="v">'+p.work+'</span></div>';
-  h+='<div class="mr"><span class="l">🚭 التدخين</span><span class="v">'+p.smoke+'</span></div>';
-  h+='<div class="mr"><span class="l">🗣️ اللغات</span><span class="v">'+p.lang+'</span></div>';
-  if(p.bio)h+='<div class="sec">📝 نبذة</div><div class="bio">"'+p.bio+'"</div>';
-  if(liked.indexOf(p.id)===-1)h+='<button class="cl gb" onclick="lm(\''+p.id+'\')">❤️ إعجاب</button>';
-  h+='<button class="cl" onclick="cm()">إغلاق</button>';
-  document.getElementById('mc').innerHTML=h;
-  document.getElementById('m').classList.add('on');
-}
-function lm(id){var p=P.find(function(x){return x.id===id;});if(liked.indexOf(id)===-1){liked.push(id);if(PL.indexOf(id)!==-1&&matches.indexOf(id)===-1){matches.push(id);cm();showM(p);}else{toast('❤️');}save();}cm();renderStack();}
-function cm(){document.getElementById('m').classList.remove('on');}
-function toast(msg){var t=document.getElementById('tst');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('on');},2000);}
-renderStack();
-</script>
+<!-- MARKER_SCRIPT -->
 </body>
 </html>
