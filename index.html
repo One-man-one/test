@@ -2,132 +2,280 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0a0a0a">
 <title>منصة زواج</title>
 <style>
-  :root{
-    --bg:#0a0a0a;--bg2:#141414;--card:#1a1a1a;--border:#2a2a2a;
-    --gold:#d4af37;--gold-light:#e8c96a;
-    --text:#f0f0f0;--text-dim:#999;
-    --green:#22c55e;--red:#ef4444;
-  }
-  *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
-  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);position:fixed;width:100%;top:0;left:0}
-
-  .app{height:100vh;height:100dvh;position:relative}
-
-  .top-bar{position:absolute;top:0;left:0;right:0;height:60px;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg);z-index:10}
-  .brand{font-size:18px;font-weight:700;color:var(--gold)}
-  .actions{display:flex;gap:12px;align-items:center}
-  .icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;font-size:16px}
-  .badge{position:absolute;top:-4px;left:-4px;background:var(--red);color:#fff;font-size:10px;padding:2px 5px;border-radius:8px;font-weight:700}
-
-  .deck-area{position:absolute;top:60px;left:0;right:0;bottom:170px;overflow:hidden}
-
-  .card-stack{position:absolute;top:12px;left:12px;right:12px;bottom:12px;max-width:400px;margin:0 auto}
-
-  .card{position:absolute;top:0;left:0;right:0;bottom:0;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:18px;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.5);cursor:pointer;will-change:transform}
-  .card::before{content:'';position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.6}
-  .card.behind-2{transform:scale(.94) translateY(10px);opacity:.6;pointer-events:none}
-  .card.behind-3{transform:scale(.88) translateY(20px);opacity:.3;pointer-events:none}
-
-  .card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-  .card-id{font-size:13px;color:var(--gold);font-weight:700;letter-spacing:.5px}
-  .card-age{font-size:13px;color:var(--text-dim);margin-top:2px}
-  .card-avatar{width:70px;height:70px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;background:var(--bg2);font-size:34px;flex-shrink:0;box-shadow:0 0 20px rgba(212,175,55,.3)}
-  .card-name{text-align:center;font-size:20px;font-weight:800;color:var(--gold-light);margin:8px 0 4px}
-  .card-loc{text-align:center;font-size:14px;font-weight:600;margin-bottom:2px}
-  .card-nat{text-align:center;font-size:12px;color:var(--text-dim);margin-bottom:14px}
-  .mini-details{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px}
-  .mini-detail{display:flex;justify-content:space-between;font-size:13px;gap:6px;padding:6px 0;border-bottom:1px solid rgba(42,42,42,.5)}
-  .mini-detail .label{color:var(--text-dim)}
-  .mini-detail .value{color:var(--text);font-weight:600}
-  .bio-preview{background:var(--bg2);border-right:3px solid var(--gold);padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.6;color:var(--text);margin-top:12px;font-style:italic}
-  .tap-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--text-dim);opacity:.7;background:rgba(0,0,0,.4);padding:4px 12px;border-radius:20px;white-space:nowrap}
-  .stamp{position:absolute;top:40px;font-size:36px;font-weight:900;padding:10px 20px;border:4px solid;border-radius:12px;opacity:0;pointer-events:none}
-  .stamp-like{left:30px;color:var(--green);border-color:var(--green);transform:rotate(-20deg)}
-  .stamp-nope{right:30px;color:var(--red);border-color:var(--red);transform:rotate(20deg)}
-
-  .action-buttons{position:absolute;bottom:70px;left:0;right:0;height:100px;display:flex;justify-content:center;gap:28px;align-items:center;background:var(--bg);z-index:10}
-  .action-btn{width:64px;height:64px;border-radius:50%;border:2px solid;background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;transition:transform .15s}
-  .action-btn:active{transform:scale(.9)}
-  .action-btn.skip{border-color:var(--red);color:var(--red)}
-  .action-btn.like{border-color:var(--green);color:var(--green);width:72px;height:72px;font-size:32px}
-
-  .bottom-nav{position:absolute;bottom:0;left:0;right:0;height:70px;background:var(--bg2);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:100}
-  .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--text-dim);font-size:10px;cursor:pointer;padding:6px 8px;flex:1;position:relative}
-  .nav-item.active{color:var(--gold)}
-  .nav-icon{font-size:20px}
-  .nav-badge{position:absolute;top:2px;left:50%;background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700}
-
-  .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);display:none;align-items:flex-end;z-index:200}
-  .modal-overlay.show{display:flex}
-  .modal{background:var(--card);width:100%;max-height:90vh;border-radius:24px 24px 0 0;padding:20px;overflow-y:auto;border-top:2px solid var(--gold)}
-  .modal-handle{width:50px;height:5px;background:var(--border);border-radius:3px;margin:0 auto 18px}
-  .modal h2{color:var(--gold);font-size:22px;margin-bottom:4px;text-align:center}
-  .modal .sub{color:var(--text-dim);font-size:13px;margin-bottom:18px;text-align:center}
-  .section-label{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1.5px;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-  .modal-details{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
-  .m-detail{display:flex;justify-content:space-between;font-size:13px;gap:8px;padding:8px 0;border-bottom:1px solid rgba(42,42,42,.4)}
-  .m-detail .label{color:var(--text-dim)}
-  .m-detail .value{color:var(--text);font-weight:600}
-  .bio-box{background:var(--bg2);border-right:3px solid var(--gold);padding:12px 14px;border-radius:10px;font-size:13px;line-height:1.8;margin-top:10px;color:#ddd}
-  .marriage-tags{display:flex;flex-wrap:wrap;gap:6px}
-  .marriage-tag{background:rgba(212,175,55,.15);color:var(--gold-light);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
-  .modal-actions{display:flex;gap:10px;margin-top:20px;padding-bottom:10px}
-  .btn-interest{flex:1;padding:14px;border-radius:30px;border:none;background:var(--gold);color:#000;font-weight:700;font-size:15px;cursor:pointer}
-  .btn-close{width:100%;padding:14px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:14px;cursor:pointer;margin-top:10px}
-
-  .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--gold);color:#000;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:700;transition:transform .3s;z-index:300;max-width:85%;text-align:center}
-  .toast.show{transform:translateX(-50%) translateY(0)}
-
-  .empty-state{text-align:center;padding:60px 20px;color:var(--text-dim)}
-  .empty-state .big-icon{font-size:64px;margin-bottom:20px;opacity:.5}
-  .empty-state h3{color:var(--gold);font-size:20px;margin-bottom:10px;font-weight:700}
-  .empty-state p{font-size:13px;line-height:1.7}
-  .btn-reset{margin-top:20px;padding:12px 28px;border-radius:30px;border:1px solid var(--gold);background:transparent;color:var(--gold);font-weight:700;cursor:pointer;font-size:14px}
-
-  #errorBox{display:none;position:fixed;top:0;left:0;right:0;background:#c00;color:#fff;padding:12px;font-size:12px;z-index:9999;direction:ltr;font-family:monospace;white-space:pre-wrap;max-height:50vh;overflow:auto}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif;user-select:none}
+body{background:#0a0a0a;color:#f0f0f0;overflow:hidden;position:fixed;top:0;left:0;right:0;bottom:0}
+.top{position:fixed;top:0;left:0;right:0;height:55px;background:#0a0a0a;border-bottom:1px solid #222;display:flex;justify-content:space-between;align-items:center;padding:0 16px;z-index:10}
+.top b{color:#d4af37;font-size:18px}
+.deck{position:fixed;top:55px;left:0;right:0;bottom:170px;padding:12px}
+.stack{position:absolute;top:12px;left:12px;right:12px;bottom:12px;max-width:400px;margin:0 auto}
+.card{position:absolute;top:0;left:0;right:0;bottom:0;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:20px;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.5);cursor:pointer}
+.card.glow{box-shadow:0 0 0 2px #d4af37, 0 10px 40px rgba(212,175,55,.4)}
+.card.behind{transform:scale(.94) translateY(10px);opacity:.5;pointer-events:none}
+.avatar{width:70px;height:70px;border-radius:50%;border:2px solid #d4af37;display:flex;align-items:center;justify-content:center;background:#141414;font-size:34px;float:left}
+.name{color:#e8c96a;font-size:20px;font-weight:800;text-align:center;margin:10px 0 4px;clear:both}
+.loc{text-align:center;font-size:14px;font-weight:600;margin-bottom:14px}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px}
+.row .l{color:#888}
+.row .v{font-weight:600}
+.bio{background:#141414;border-right:3px solid #d4af37;padding:10px;border-radius:8px;font-size:12px;margin-top:12px;line-height:1.6}
+.btns{position:fixed;bottom:70px;left:0;right:0;height:100px;display:flex;justify-content:center;gap:30px;align-items:center;background:#0a0a0a;z-index:10}
+.btn{width:64px;height:64px;border-radius:50%;border:2px solid;background:#141414;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px}
+.btn.no{border-color:#ef4444;color:#ef4444}
+.btn.yes{border-color:#22c55e;color:#22c55e;width:72px;height:72px;font-size:34px}
+.nav{position:fixed;bottom:0;left:0;right:0;height:70px;background:#141414;border-top:1px solid #222;display:flex;justify-content:space-around;z-index:100}
+.nav button{background:none;border:none;color:#888;font-size:10px;cursor:pointer;padding:8px;flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav button.on{color:#d4af37}
+.nav i{font-size:20px;font-style:normal}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);display:none;align-items:flex-end;z-index:200}
+.modal.on{display:flex}
+.modal-in{background:#1a1a1a;width:100%;max-height:88vh;border-radius:24px 24px 0 0;padding:20px;overflow-y:auto;border-top:2px solid #d4af37}
+.modal-in h2{color:#d4af37;text-align:center;margin-bottom:6px}
+.modal-in .sub{color:#888;text-align:center;font-size:13px;margin-bottom:16px}
+.sec{font-size:11px;color:#d4af37;font-weight:700;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid #2a2a2a}
+.mrow{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222;font-size:13px}
+.mrow .l{color:#888}
+.mrow .v{font-weight:600}
+.close{margin-top:16px;width:100%;padding:14px;border-radius:30px;border:1px solid #333;background:transparent;color:#f0f0f0;font-size:14px;cursor:pointer}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-100px);background:#d4af37;color:#000;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:700;transition:transform .3s;z-index:300}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;padding:60px 20px;color:#888;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%}
+.empty h3{color:#d4af37;margin-bottom:10px}
+.reset{margin-top:16px;padding:10px 24px;border-radius:30px;border:1px solid #d4af37;background:transparent;color:#d4af37;font-weight:700;cursor:pointer}
 </style>
 </head>
 <body>
 
-<div id="errorBox"></div>
-
-<div class="app">
-  <div class="top-bar">
-    <div class="brand">❤️ منصة زواج</div>
-    <div class="actions">
-      <button class="icon-btn" onclick="showToast('قريباً')">⚙️</button>
-      <button class="icon-btn" onclick="showSection('notifications')">🔔<span class="badge">1</span></button>
-    </div>
-  </div>
-
-  <div class="deck-area" id="deckArea">
-    <div class="card-stack" id="cardStack"></div>
-  </div>
-
-  <div class="action-buttons" id="actionButtons">
-    <button class="action-btn skip" onclick="skipTop()">✕</button>
-    <button class="action-btn like" onclick="likeTop()">❤</button>
-  </div>
-
-  <div class="bottom-nav">
-    <button class="nav-item active" onclick="showSection('browse')" data-section="browse"><span class="nav-icon">🔍</span><span>استعراض</span></button>
-    <button class="nav-item" onclick="showSection('matches')" data-section="matches"><span class="nav-icon">💚</span><span>مطابقاتي</span></button>
-    <button class="nav-item" onclick="showSection('notifications')" data-section="notifications"><span class="nav-icon">🔔</span><span>الإشعارات</span><span class="nav-badge">1</span></button>
-    <button class="nav-item" onclick="showSection('profile')" data-section="profile"><span class="nav-icon">👤</span><span>ملفي</span></button>
-    <button class="nav-item" onclick="showSection('help')" data-section="help"><span class="nav-icon">❓</span><span>المساعدة</span></button>
-  </div>
+<div class="top">
+  <b>❤️ منصة زواج</b>
+  <span id="counter" style="color:#888;font-size:13px"></span>
 </div>
 
-<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal"><div class="modal-handle"></div><div id="modalContent"></div></div>
+<div class="deck">
+  <div class="stack" id="stack"></div>
+</div>
+
+<div class="btns">
+  <button class="btn no" onclick="skipTop()">✕</button>
+  <button class="btn yes" onclick="likeTop()">❤</button>
+</div>
+
+<div class="nav">
+  <button class="on" onclick="showSec('browse',this)"><i>🔍</i>استعراض</button>
+  <button onclick="showSec('matches',this)"><i>💚</i>مطابقاتي</button>
+  <button onclick="showSec('profile',this)"><i>👤</i>ملفي</button>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-in"><div id="modalContent"></div></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script src="app.js"></script>
+<script>
+var profiles = [
+  {id:'SK-75001',name:'عبدالله',age:19,nat:'سوري',city:'بيروت',country:'لبنان',flag:'🇱🇧',emoji:'👨',h:190,w:66,build:'نحيف',eyes:'عسلي',hair:'أسود',skin:'داكنة',religion:'الإسلام - سنة',marital:'أعزب',marriage:['شرعي','مدني'],edu:'ثانوي',work:'بلاط',smoke:'مدخّن',lang:'العربية',bio:'أحب العمل وأن يكون لدي زوجة صالحة.'},
+  {id:'SK-61225',name:'',age:25,nat:'المغرب',city:'الرياض',country:'السعودية',flag:'🇸🇦',emoji:'👩',h:166,w:52,build:'متوسط',eyes:'بني',hair:'بني',skin:'فاتحة',religion:'الإسلام - سنة',marital:'لم يسبق لها الزواج',marriage:['شرعي'],edu:'ماجستير',work:'مهندسة',smoke:'غير مدخنة',lang:'العربية',bio:'أحب القراءة والرياضة.'},
+  {id:'SK-61297',name:'',age:23,nat:'يمنية',city:'القاهرة',country:'مصر',flag:'🇪🇬',emoji:'👩‍🦰',h:166,w:55,build:'متوسط',eyes:'بني',hair:'أسود',skin:'قمحية',religion:'الإسلام - سنة',marital:'لم يسبق لها الزواج',marriage:['شرعي'],edu:'بكالوريوس',work:'معلمة',smoke:'غير مدخنة',lang:'العربية',bio:'أحب التدريس.'},
+  {id:'SK-70953',name:'',age:31,nat:'المغرب',city:'الجديدة',country:'المغرب',flag:'🇲🇦',emoji:'👩‍⚕️',h:170,w:65,build:'متوسط',eyes:'عسلي',hair:'بني',skin:'قمحية',religion:'الإسلام - سنة',marital:'لم يسبق لها الزواج',marriage:['شرعي'],edu:'دكتوراه',work:'طبيبة',smoke:'غير مدخنة',lang:'العربية',bio:'أحب الطب والسفر.'},
+  {id:'SK-72145',name:'فاطمة',age:27,nat:'تونسية',city:'تونس',country:'تونس',flag:'🇹🇳',emoji:'👩‍🎓',h:164,w:54,build:'نحيف',eyes:'بني',hair:'بني',skin:'قمحية',religion:'الإسلام - سنة',marital:'لم يسبق لها الزواج',marriage:['شرعي'],edu:'ماجستير',work:'مهندسة',smoke:'غير مدخنة',lang:'العربية',bio:'أحب الفن والتصميم.'},
+  {id:'SK-74125',name:'ياسمين',age:24,nat:'سورية',city:'إستنبول',country:'تركيا',flag:'🇹🇷',emoji:'👩‍🍳',h:168,w:56,build:'نحيف',eyes:'عسلي',hair:'بني',skin:'فاتحة',religion:'الإسلام - سنة',marital:'لم يسبق لها الزواج',marriage:['شرعي'],edu:'بكالوريوس',work:'صيدلانية',smoke:'غير مدخنة',lang:'العربية',bio:'أحب الطبخ والقراءة.'},
+  {id:'SK-77456',name:'مريم',age:30,nat:'مغربية',city:'الدار البيضاء',country:'المغرب',flag:'🇲🇦',emoji:'👩‍🔬',h:167,w:58,build:'متوسط',eyes:'بني',hair:'أسود',skin:'قمحية',religion:'الإسلام - سنة',marital:'لم يسبق لها الزواج',marriage:['شرعي'],edu:'دكتوراه',work:'باحثة',smoke:'غير مدخنة',lang:'العربية',bio:'أحب العلم والبحث.'},
+  {id:'SK-78123',name:'',age:22,nat:'سعودية',city:'الرياض',country:'السعودية',flag:'🇸🇦',emoji:'👩‍🎨',h:162,w:50,build:'نحيف',eyes:'بني',hair:'أسود',skin:'فاتحة',religion:'الإسلام - سنة',marital:'لم يسبق لها الزواج',marriage:['شرعي'],edu:'بكالوريوس',work:'مصممة',smoke:'غير مدخنة',lang:'العربية',bio:'فنانة وأحب الهدوء.'},
+  {id:'SK-79344',name:'',age:28,nat:'عراقية',city:'بغداد',country:'العراق',flag:'🇮🇶',emoji:'👩‍⚕️',h:163,w:55,build:'متوسط',eyes:'عسلي',hair:'بني',skin:'قمحية',religion:'الإسلام - سنة',marital:'لم يسبق لها الزواج',marriage:['شرعي'],edu:'بكالوريوس',work:'طبيبة أسنان',smoke:'غير مدخنة',lang:'العربية',bio:'أحب عملي.'},
+  {id:'SK-81234',name:'',age:25,nat:'كويتية',city:'الكويت',country:'الكويت',flag:'🇰🇼',emoji:'👩‍🍳',h:165,w:52,build:'نحيف',eyes:'بني',hair:'أسود',skin:'فاتحة',religion:'الإسلام - سنة',marital:'لم يسبق لها الزواج',marriage:['شرعي'],edu:'بكالوريوس',work:'معلمة',smoke:'غير مدخنة',lang:'العربية',bio:'أحب الأطفال.'}
+];
+
+var liked = [], skipped = [], current = 'browse', animating = false;
+
+function showSec(s, btn) {
+  current = s;
+  document.querySelectorAll('.nav button').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  render();
+}
+
+function render() {
+  if (current === 'browse') { renderStack(); document.querySelector('.deck').style.display='block'; document.querySelector('.btns').style.display='flex'; }
+  else if (current === 'matches') renderMatches();
+  else if (current === 'profile') renderProfile();
+}
+
+function avail() {
+  return profiles.filter(function(p){ return liked.indexOf(p.id) === -1 && skipped.indexOf(p.id) === -1; });
+}
+
+function renderStack() {
+  var stack = document.getElementById('stack');
+  var a = avail();
+  document.getElementById('counter').textContent = a.length + ' متبقي';
+  if (a.length === 0) {
+    stack.innerHTML = '<div class="empty"><h3>انتهت الملفات 🎉</h3><p>شاهدت جميع الملفات.</p><button class="reset" onclick="resetDeck()">إعادة البدء</button></div>';
+    return;
+  }
+  var html = '';
+  if (a[2]) html += cardHTML(a[2], 'behind');
+  if (a[1]) html += cardHTML(a[1], 'behind');
+  html += cardHTML(a[0], 'top');
+  stack.innerHTML = html;
+  var top = stack.querySelector('.card.top');
+  if (top) swipe(top, a[0]);
+}
+
+function cardHTML(p, pos) {
+  var tags = p.marriage.map(function(m){ return '<span style="background:rgba(212,175,55,.15);color:#e8c96a;padding:3px 8px;border-radius:10px;font-size:11px;margin:2px;display:inline-block">' + m + '</span>'; }).join('');
+  var name = p.name ? '<div class="name">' + p.name + '</div>' : '<div style="height:10px"></div>';
+  var bio = p.bio ? '<div class="bio">"' + p.bio + '"</div>' : '';
+  return '<div class="card ' + pos + '">' +
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="color:#d4af37;font-size:13px;font-weight:700">' + p.id + '</div><div style="color:#888;font-size:13px;margin-top:2px">' + p.age + ' سنة</div></div><div class="avatar">' + p.emoji + '</div></div>' +
+    name +
+    '<div class="loc">' + p.city + '، ' + p.country + ' ' + p.flag + '</div>' +
+    '<div class="row"><span class="l">📏 الطول</span><span class="v">' + p.h + ' سم</span></div>' +
+    '<div class="row"><span class="l">⚖️ الوزن</span><span class="v">' + p.w + ' كجم</span></div>' +
+    '<div class="row"><span class="l">👁️ العينان</span><span class="v">' + p.eyes + '</span></div>' +
+    '<div class="row"><span class="l">💇 الشعر</span><span class="v">' + p.hair + '</span></div>' +
+    '<div class="row"><span class="l">💼 المهنة</span><span class="v">' + p.work + '</span></div>' +
+    '<div class="row"><span class="l">💍 الزواج</span><span class="v">' + tags + '</span></div>' +
+    bio +
+    '</div>';
+}
+
+function swipe(card, p) {
+  var sx=0, cx=0, cy=0, drag=false, moved=false;
+  card.addEventListener('touchstart', start, {passive:true});
+  card.addEventListener('touchmove', move, {passive:false});
+  card.addEventListener('touchend', end);
+  card.addEventListener('mousedown', start);
+  document.addEventListener('mousemove', move);
+  document.addEventListener('mouseup', end);
+
+  function start(e) {
+    if (animating) return;
+    drag = true; moved = false;
+    var pt = e.touches ? e.touches[0] : e;
+    sx = pt.clientX;
+    card.style.transition = 'none';
+  }
+  function move(e) {
+    if (!drag) return;
+    if (e.type === 'touchmove') e.preventDefault();
+    var pt = e.touches ? e.touches[0] : e;
+    cx = pt.clientX - sx;
+    cy = pt.clientY - sx;
+    if (Math.abs(cx) > 5) moved = true;
+    card.style.transform = 'translate(' + cx + 'px,' + (cy/3) + 'px) rotate(' + (cx/18) + 'deg)';
+    card.classList.remove('glow');
+    if (cx > 50) card.style.boxShadow = '0 0 30px #22c55e';
+    else if (cx < -50) card.style.boxShadow = '0 0 30px #ef4444';
+    else card.style.boxShadow = '';
+  }
+  function end(e) {
+    if (!drag) return;
+    drag = false;
+    if (!moved && Math.abs(cx) < 5) { openModal(p.id); card.style.transform=''; card.style.boxShadow=''; return; }
+    if (cx > 100) swipeOut(card, 'right', p);
+    else if (cx < -100) swipeOut(card, 'left', p);
+    else { card.style.transition='transform .3s'; card.style.transform=''; card.style.boxShadow=''; }
+    cx = 0;
+  }
+}
+
+function swipeOut(card, dir, p) {
+  if (animating) return;
+  animating = true;
+  var x = dir === 'right' ? window.innerWidth : -window.innerWidth;
+  card.style.transition = 'transform .4s, opacity .4s';
+  card.style.transform = 'translate(' + x + 'px,0) rotate(' + (dir==='right'?30:-30) + 'deg)';
+  card.style.opacity = '0';
+  setTimeout(function() {
+    if (dir === 'right') { liked.push(p.id); toast('❤️ ' + (p.name||p.id)); }
+    else { skipped.push(p.id); toast('✕ ' + (p.name||p.id)); }
+    animating = false;
+    renderStack();
+  }, 350);
+}
+
+function likeTop() { var a = avail(); if(!a.length) return; var c = document.querySelector('.card.top'); if(c) swipeOut(c,'right',a[0]); }
+function skipTop() { var a = avail(); if(!a.length) return; var c = document.querySelector('.card.top'); if(c) swipeOut(c,'left',a[0]); }
+
+function resetDeck() { liked=[]; skipped=[]; renderStack(); toast('تم إعادة البدء'); }
+
+function renderMatches() {
+  var html = '<div style="max-width:400px;margin:0 auto;padding:16px;overflow-y:auto;max-height:calc(100vh - 140px)">';
+  html += '<h2 style="color:#d4af37;text-align:center;margin-bottom:16px">💚 مطابقاتي (' + liked.length + ')</h2>';
+  if (!liked.length) html += '<p style="text-align:center;color:#888">لا توجد مطابقات بعد.</p>';
+  liked.forEach(function(id) {
+    var p = profiles.find(function(x){ return x.id === id; });
+    if (!p) return;
+    html += '<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px" onclick="openModal(\'' + p.id + '\')">' +
+      '<div style="width:50px;height:50px;border-radius:50%;border:2px solid #d4af37;display:flex;align-items:center;justify-content:center;font-size:24px">' + p.emoji + '</div>' +
+      '<div><div style="color:#e8c96a;font-weight:700">' + (p.name||p.id) + '</div><div style="color:#888;font-size:12px">' + p.age + ' سنة • ' + p.city + '</div></div></div>';
+  });
+  html += '</div>';
+  document.getElementById('stack').innerHTML = html;
+  document.querySelector('.deck').style.display = 'block';
+  document.querySelector('.btns').style.display = 'none';
+  document.getElementById('counter').textContent = liked.length + ' مطابقة';
+}
+
+function renderProfile() {
+  var html = '<div style="max-width:400px;margin:0 auto;padding:16px;text-align:center">';
+  html += '<h2 style="color:#d4af37;margin-bottom:20px">ملفي</h2>';
+  html += '<div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:20px">';
+  html += '<div class="avatar" style="margin:0 auto 16px;float:none">👤</div>';
+  html += '<div class="row"><span class="l">الإعجابات المرسلة</span><span class="v">' + liked.length + '</span></div>';
+  html += '<div class="row"><span class="l">المتخطاة</span><span class="v">' + skipped.length + '</span></div>';
+  html += '<div class="row"><span class="l">المتبقية</span><span class="v">' + avail().length + '</span></div>';
+  html += '</div></div>';
+  document.getElementById('stack').innerHTML = html;
+  document.querySelector('.deck').style.display = 'block';
+  document.querySelector('.btns').style.display = 'none';
+  document.getElementById('counter').textContent = '';
+}
+
+function openModal(id) {
+  var p = profiles.find(function(x){ return x.id === id; });
+  if (!p) return;
+  var tags = p.marriage.map(function(m){ return '<span style="background:rgba(212,175,55,.15);color:#e8c96a;padding:3px 10px;border-radius:12px;font-size:11px;margin:2px;display:inline-block">' + m + '</span>'; }).join('');
+  var h = '<h2>' + (p.name ? '👤 ' + p.name : p.id) + '</h2>';
+  h += '<div class="sub">' + p.age + ' سنة • ' + p.city + '، ' + p.country + ' ' + p.flag + '</div>';
+  h += '<div class="sec">📐 المواصفات</div>';
+  h += '<div class="mrow"><span class="l">📏 الطول</span><span class="v">' + p.h + ' سم</span></div>';
+  h += '<div class="mrow"><span class="l">⚖️ الوزن</span><span class="v">' + p.w + ' كجم</span></div>';
+  h += '<div class="mrow"><span class="l">🧍 البنية</span><span class="v">' + p.build + '</span></div>';
+  h += '<div class="mrow"><span class="l">👁️ العينان</span><span class="v">' + p.eyes + '</span></div>';
+  h += '<div class="mrow"><span class="l">💇 الشعر</span><span class="v">' + p.hair + '</span></div>';
+  h += '<div class="mrow"><span class="l">🎨 البشرة</span><span class="v">' + p.skin + '</span></div>';
+  h += '<div class="sec">🕌 الدين والحالة</div>';
+  h += '<div class="mrow"><span class="l">🕌 الدين</span><span class="v">' + p.religion + '</span></div>';
+  h += '<div class="mrow"><span class="l">💕 الحالة</span><span class="v">' + p.marital + '</span></div>';
+  h += '<div class="mrow"><span class="l">💍 الزواج</span><span class="v">' + tags + '</span></div>';
+  h += '<div class="sec">📖 التعليم والعمل</div>';
+  h += '<div class="mrow"><span class="l">📖 المؤهل</span><span class="v">' + p.edu + '</span></div>';
+  h += '<div class="mrow"><span class="l">💼 المهنة</span><span class="v">' + p.work + '</span></div>';
+  h += '<div class="mrow"><span class="l">🚭 التدخين</span><span class="v">' + p.smoke + '</span></div>';
+  h += '<div class="mrow"><span class="l">🗣️ اللغات</span><span class="v">' + p.lang + '</span></div>';
+  if (p.bio) h += '<div class="sec">📝 نبذة</div><div class="bio">"' + p.bio + '"</div>';
+  if (liked.indexOf(p.id) === -1) h += '<button class="close" style="background:#d4af37;color:#000;font-weight:700;border:none" onclick="likeFromModal(\'' + p.id + '\')">❤️ إعجاب</button>';
+  h += '<button class="close" onclick="closeModal()">إغلاق</button>';
+  document.getElementById('modalContent').innerHTML = h;
+  document.getElementById('modal').classList.add('on');
+}
+
+function likeFromModal(id) { if (liked.indexOf(id)===-1) { liked.push(id); toast('❤️ تم الإعجاب'); } closeModal(); renderStack(); }
+function closeModal() { document.getElementById('modal').classList.remove('on'); }
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.classList.remove('on'); }, 2000);
+}
+
+renderStack();
+</script>
 </body>
 </html>
