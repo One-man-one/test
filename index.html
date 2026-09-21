@@ -63,6 +63,28 @@ body{background:#0a0a0a;color:#f0f0f0;overflow:hidden;position:fixed;top:0;left:
 .login p{color:#888;font-size:14px;margin-bottom:20px}
 .login .btn2{padding:14px 30px;border-radius:30px;border:none;background:#d4af37;color:#000;font-weight:700;font-size:15px;cursor:pointer;width:100%;max-width:300px}
 .login input{width:100%;max-width:300px;padding:14px;background:#141414;border:1px solid #333;border-radius:30px;color:#fff;font-size:15px;text-align:center}
+.chat{position:fixed;top:0;left:0;right:0;bottom:0;background:#0a0a0a;display:none;flex-direction:column;z-index:400}
+.chat.on{display:flex}
+.chat-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#141414;border-bottom:1px solid #222;flex-shrink:0}
+.chat-back{background:none;border:none;color:#d4af37;font-size:22px;cursor:pointer;padding:0 8px}
+.chat-av{width:42px;height:42px;border-radius:50%;border:2px solid #d4af37;display:flex;align-items:center;justify-content:center;font-size:22px;background:#0a0a0a;flex-shrink:0}
+.chat-name{flex:1}
+.chat-name b{display:block;color:#e8c96a;font-size:15px}
+.chat-name small{color:#22c55e;font-size:11px}
+.chat-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:75%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.5;word-wrap:break-word}
+.msg.me{background:#d4af37;color:#000;align-self:flex-end;border-bottom-right-radius:4px;font-weight:500}
+.msg.them{background:#1a1a1a;color:#f0f0f0;align-self:flex-start;border-bottom-left-radius:4px;border:1px solid #2a2a2a}
+.msg-time{font-size:10px;opacity:.6;margin-top:4px;display:block}
+.chat-input{display:flex;gap:8px;padding:10px;background:#141414;border-top:1px solid #222;padding-bottom:max(10px,env(safe-area-inset-bottom));flex-shrink:0}
+.chat-input input{flex:1;padding:12px 16px;background:#0a0a0a;border:1px solid #333;border-radius:24px;color:#f0f0f0;font-size:14px;outline:none}
+.chat-input input:focus{border-color:#d4af37}
+.chat-input button{padding:0 20px;background:#d4af37;color:#000;border:none;border-radius:24px;font-weight:700;font-size:14px;cursor:pointer}
+.typing{align-self:flex-start;background:#1a1a1a;padding:12px 16px;border-radius:16px;display:flex;gap:4px;border:1px solid #2a2a2a}
+.typing span{width:7px;height:7px;background:#666;border-radius:50%;animation:blink 1.4s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.3}30%{opacity:1}}
 </style>
 </head>
 <body>
@@ -99,11 +121,28 @@ body{background:#0a0a0a;color:#f0f0f0;overflow:hidden;position:fixed;top:0;left:
 <div class="modal" id="m" onclick="if(event.target===this)cm()"><div class="min"><div id="mc"></div></div></div>
 <div class="modal" id="filtM" onclick="if(event.target===this)cf()"><div class="min"><div id="filtC"></div></div></div>
 
-<div class="mp" id="mp" onclick="this.classList.remove('on')">
+<div class="mp" id="mp">
   <div class="em">💚🎉💚</div>
   <h1>مطابقة!</h1>
   <p id="mt" style="color:#ddd;font-size:16px"></p>
-  <button class="rst" style="background:#d4af37;color:#000;border:none;padding:12px 30px">متابعة</button>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <button class="rst" style="background:#d4af37;color:#000;border:none;padding:12px 24px;font-weight:700" onclick="chatFromPopup()">💬 راسل الآن</button>
+    <button class="rst" onclick="document.getElementById('mp').classList.remove('on')">متابعة</button>
+  </div>
+</div>
+
+<div class="chat" id="chatScr">
+  <div class="chat-head">
+    <button class="chat-back" onclick="closeChat()">→</button>
+    <div class="chat-av" id="chatAv">👤</div>
+    <div class="chat-name"><b id="chatTitle">-</b><small>● متصل الآن</small></div>
+    <button class="chat-back" onclick="clearThisChat()" title="حذف المحادثة">🗑️</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-input">
+    <input id="chatMsg" placeholder="اكتب رسالة..." onkeypress="if(event.key==='Enter')sendMsg()">
+    <button onclick="sendMsg()">إرسال</button>
+  </div>
 </div>
 
 <div class="tst" id="tst"></div>
@@ -199,6 +238,98 @@ function clrFilt(){filt={min:18,max:60,country:"",marriage:""};save();cf();rende
 function cf(){document.getElementById("filtM").classList.remove("on");}
 function toast(msg){var t=document.getElementById("tst");t.textContent=msg;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove("on");},2000);}
 if(!me){document.getElementById("loginScreen").style.display="flex";}else{document.getElementById("loginScreen").style.display="none";renderStack();}
+// ============ نظام المراسلة ============
+var chats={};
+var currentChat=null;
+var autoReplies=["أهلاً وسهلاً! 😊","يسعدني تواصلك معي.","هذا نموذج تجريبي للمحادثة.","أخبرني المزيد عنك.","شكراً لرسالتك 🌹","ممكن نتعرف أكثر؟","موضوع شيق!","أنا مهتم أيضاً."];
+try{var cs=localStorage.getItem("zw_chats");if(cs)chats=JSON.parse(cs);}catch(e){}
+function saveChats(){try{localStorage.setItem("zw_chats",JSON.stringify(chats));}catch(e){}}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+function openChat(id){
+  var p=P.find(function(x){return x.id===id;});
+  if(!p)return;
+  currentChat=id;
+  document.getElementById("chatAv").textContent=p.emoji;
+  document.getElementById("chatTitle").textContent=p.name||p.id;
+  renderChat();
+  document.getElementById("chatScr").classList.add("on");
+  setTimeout(function(){var i=document.getElementById("chatMsg");if(i)i.focus();},100);
+}
+function renderChat(){
+  var body=document.getElementById("chatBody");
+  var msgs=chats[currentChat]||[];
+  if(!msgs.length){
+    body.innerHTML='<div style="text-align:center;color:#888;padding:30px 20px;font-size:13px;line-height:1.8">💚<br>أنتما متطابقان الآن!<br>ابدأ المحادثة بأدب واحترام</div>';
+    return;
+  }
+  body.innerHTML=msgs.map(function(m){
+    var t=new Date(m.t).toLocaleTimeString("ar",{hour:"2-digit",minute:"2-digit"});
+    return '<div class="msg '+(m.me?"me":"them")+'">'+escapeHTML(m.x)+'<span class="msg-time">'+t+'</span></div>';
+  }).join("");
+  body.scrollTop=body.scrollHeight;
+}
+function sendMsg(){
+  var inp=document.getElementById("chatMsg");
+  var txt=inp.value.trim();
+  if(!txt||!currentChat)return;
+  if(!chats[currentChat])chats[currentChat]=[];
+  chats[currentChat].push({t:Date.now(),me:true,x:txt});
+  saveChats();inp.value="";renderChat();
+  var cid=currentChat;
+  setTimeout(function(){
+    var body=document.getElementById("chatBody");
+    var tEl=document.createElement("div");
+    tEl.className="typing";tEl.id="tpx";
+    tEl.innerHTML="<span></span><span></span><span></span>";
+    body.appendChild(tEl);body.scrollTop=body.scrollHeight;
+  },400);
+  setTimeout(function(){
+    var tEl=document.getElementById("tpx");if(tEl)tEl.remove();
+    if(currentChat!==cid)return;
+    var reply=autoReplies[Math.floor(Math.random()*autoReplies.length)];
+    chats[cid].push({t:Date.now(),me:false,x:reply});
+    saveChats();renderChat();sLike();
+    if(navigator.vibrate)navigator.vibrate(30);
+  },1500+Math.random()*1000);
+}
+function closeChat(){document.getElementById("chatScr").classList.remove("on");currentChat=null;}
+function clearThisChat(){
+  if(!currentChat)return;
+  if(!confirm("حذف كل الرسائل مع هذا الشخص؟"))return;
+  delete chats[currentChat];saveChats();renderChat();toast("تم حذف المحادثة");
+}
+function chatFromPopup(){
+  var id=window._matchId;
+  document.getElementById("mp").classList.remove("on");
+  if(id)openChat(id);
+}
+// تحديث showM لتخزين معرّف المطابقة
+function showM(p){
+  document.getElementById("mt").textContent="أعجبت "+(p.name||p.id)+" وأعجبت بك أيضاً!";
+  window._matchId=p.id;
+  document.getElementById("mp").classList.add("on");
+  sLike();
+}
+// تحديث قائمة المطابقات لإضافة زر المراسلة
+function renderM(){
+  var st=document.getElementById("stack");
+  var h='<div style="max-width:400px;margin:0 auto;padding:16px;overflow-y:auto;max-height:calc(100vh - 140px)">';
+  h+='<h2 style="color:#d4af37;text-align:center;margin-bottom:16px">💚 مطابقاتي ('+matches.length+')</h2>';
+  if(!matches.length)h+='<p style="text-align:center;color:#888">لا توجد مطابقات بعد.</p>';
+  matches.forEach(function(id){
+    var p=P.find(function(x){return x.id===id;});
+    if(!p)return;
+    var cnt=(chats[id]||[]).length;
+    h+='<div class="mc" style="cursor:default">';
+    h+='<div class="a" onclick="om(\''+p.id+'\')" style="cursor:pointer">'+p.emoji+'</div>';
+    h+='<div onclick="om(\''+p.id+'\')" style="flex:1;cursor:pointer"><div style="color:#e8c96a;font-weight:700">'+(p.name||p.id)+'</div><div style="color:#888;font-size:12px">'+p.age+' سنة • '+p.city+(cnt?' • 💬 '+cnt:'')+'</div></div>';
+    h+='<button onclick="openChat(\''+p.id+'\')" style="background:#d4af37;color:#000;border:none;padding:8px 14px;border-radius:20px;font-weight:700;font-size:12px;cursor:pointer;flex-shrink:0">💬 راسل</button>';
+    h+='</div>';
+  });
+  h+='</div>';
+  st.innerHTML=h;
+  document.getElementById("counter").textContent=matches.length+" مطابقة";
+}
 </script>
 </body>
 </html>
