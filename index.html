@@ -3,353 +3,328 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#e91e63">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="زواج">
-<title>زواج تجريبي</title>
+<meta name="theme-color" content="#0a0a0a">
+<title>منصة زواج - نموذج</title>
 <link rel="manifest" id="manifestLink">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23e91e63'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle' fill='white'%3E%E2%9D%A4%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='72' font-size='50' text-anchor='middle' fill='%23d4af37'%3E❤%3C/text%3E%3C/svg%3E">
 <style>
+  :root{
+    --bg:#0a0a0a;
+    --bg2:#141414;
+    --card:#1a1a1a;
+    --border:#2a2a2a;
+    --gold:#d4af37;
+    --gold-light:#e8c96a;
+    --gold-dim:rgba(212,175,55,.15);
+    --text:#f0f0f0;
+    --text-dim:#999;
+    --radius:16px;
+  }
   *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%;overflow:hidden}
-  body{background:#f0f2f5;color:#222}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
   .screen{display:none;height:100vh;height:100dvh;flex-direction:column}
   .screen.active{display:flex}
 
-  /* شاشة الدخول */
-  .login{align-items:center;justify-content:center;padding:24px;gap:14px;background:linear-gradient(135deg,#e91e63,#9c27b0)}
-  .login h1{color:#fff;font-size:32px;margin-bottom:8px;text-shadow:0 2px 10px rgba(0,0,0,.2)}
-  .login p{color:#fff;opacity:.9;margin-bottom:20px;font-size:14px}
-  .btn{padding:14px 20px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;width:100%;max-width:320px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .1s;box-shadow:0 4px 15px rgba(0,0,0,.15)}
-  .btn:active{transform:scale(.97)}
-  .btn-google{background:#fff;color:#333}
-  .btn-facebook{background:#1877f2;color:#fff}
-  .btn-telegram{background:#0088cc;color:#fff}
-  .btn svg{width:22px;height:22px}
+  /* ===== الشريط العلوي ===== */
+  .top-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0}
+  .top-bar .brand{font-size:18px;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:8px}
+  .top-bar .actions{display:flex;gap:12px;align-items:center}
+  .icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;font-size:16px}
+  .icon-btn:active{background:var(--gold-dim)}
+  .badge{position:absolute;top:-4px;left:-4px;background:#e74c3c;color:#fff;font-size:10px;padding:2px 5px;border-radius:8px;font-weight:700}
 
-  /* التطبيق */
-  .app-header{background:#e91e63;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.15);flex-shrink:0}
-  .app-header h2{font-size:18px}
-  .notif-btn{background:rgba(255,255,255,.25);color:#fff;border:none;padding:8px 14px;border-radius:20px;font-size:14px;cursor:pointer;font-weight:600}
-  .notif-btn:active{background:rgba(255,255,255,.4)}
+  /* ===== المحتوى ===== */
+  .content{flex:1;overflow-y:auto;padding:16px;padding-bottom:80px}
 
-  .profiles{flex:1;overflow-y:auto;padding:14px;display:grid;gap:10px;align-content:start}
-  .profile-card{background:#fff;padding:14px;border-radius:14px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:transform .1s}
-  .profile-card:active{transform:scale(.98)}
-  .avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e91e63,#9c27b0);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
-  .info{flex:1}
-  .info strong{display:block;font-size:15px;margin-bottom:2px}
-  .info small{color:#888;font-size:13px}
-  .badge{background:#e91e63;color:#fff;font-size:11px;padding:3px 8px;border-radius:10px;font-weight:600}
+  /* ===== قسم الاستعراض ===== */
+  .view-header{text-align:center;margin-bottom:20px}
+  .view-header h1{font-size:26px;color:var(--gold);font-weight:800;line-height:1.3;margin-bottom:6px}
+  .view-header p{font-size:13px;color:var(--text-dim)}
+  .tabs{display:flex;gap:8px;margin-bottom:14px}
+  .tab{flex:1;padding:10px;border-radius:30px;border:1px solid var(--border);background:var(--bg2);color:var(--text-dim);font-size:13px;font-weight:600;cursor:pointer;text-align:center}
+  .tab.active{background:var(--gold);color:#000;border-color:var(--gold)}
+  .count-badge{display:inline-block;background:rgba(0,0,0,.2);padding:2px 8px;border-radius:10px;font-size:11px;margin-right:6px}
+  .tab.active .count-badge{background:rgba(0,0,0,.15)}
 
-  /* المحادثة */
-  .chat{display:none;flex-direction:column;height:100%}
-  .chat.active{display:flex}
-  .chat .app-header{background:#c2185b}
-  .chat-header-info{display:flex;align-items:center;gap:10px}
-  .back-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:0 8px}
-  .chat-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:20px}
+  /* ===== بطاقة الملف ===== */
+  .profile-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
+  .profile-card::before{content:'';position:absolute;top:0;right:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5}
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+  .card-id{font-size:13px;color:var(--gold);font-weight:700}
+  .card-age{font-size:13px;color:var(--text-dim)}
+  .card-location{font-size:14px;font-weight:600;margin-bottom:2px}
+  .card-nationality{font-size:12px;color:var(--text-dim)}
+  .card-avatar{width:60px;height:60px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;background:var(--bg2);font-size:28px;flex-shrink:0}
 
-  .messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:#f0f2f5}
-  .msg{padding:10px 14px;border-radius:16px;max-width:78%;font-size:15px;line-height:1.4;word-wrap:break-word;animation:pop .2s ease}
-  @keyframes pop{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-  .msg.me{background:#e91e63;color:#fff;align-self:flex-start;border-bottom-right-radius:4px}
-  .msg.other{background:#fff;align-self:flex-end;border-bottom-left-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-  .msg-time{font-size:10px;opacity:.7;margin-top:3px;display:block}
+  .card-details{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin:14px 0;padding-top:12px;border-top:1px solid var(--border)}
+  .detail{display:flex;justify-content:space-between;font-size:13px}
+  .detail .label{color:var(--text-dim)}
+  .detail .value{color:var(--text);font-weight:600}
 
-  .typing{align-self:flex-end;background:#fff;padding:12px 16px;border-radius:16px;display:flex;gap:4px}
-  .typing span{width:8px;height:8px;background:#ccc;border-radius:50%;animation:blink 1.4s infinite}
-  .typing span:nth-child(2){animation-delay:.2s}
-  .typing span:nth-child(3){animation-delay:.4s}
-  @keyframes blink{0%,60%,100%{opacity:.3}30%{opacity:1}}
+  .card-actions{display:flex;gap:10px;margin-top:14px}
+  .btn-interest{flex:1;padding:12px;border-radius:30px;border:none;background:var(--gold);color:#000;font-weight:700;font-size:14px;cursor:pointer}
+  .btn-interest:active{background:var(--gold-light)}
+  .btn-save{width:48px;height:48px;border-radius:50%;border:1px solid var(--gold);background:transparent;color:var(--gold);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .btn-save:active{background:var(--gold-dim)}
 
-  .chat-input{display:flex;padding:10px;background:#fff;gap:8px;border-top:1px solid #eee;flex-shrink:0;padding-bottom:max(10px,env(safe-area-inset-bottom))}
-  .chat-input input{flex:1;padding:12px 16px;border:1px solid #e0e0e0;border-radius:24px;outline:none;font-size:15px;background:#f7f7f7}
-  .chat-input input:focus{border-color:#e91e63;background:#fff}
-  .chat-input button{padding:0 20px;background:#e91e63;color:#fff;border:none;border-radius:24px;cursor:pointer;font-weight:600;font-size:15px}
-  .chat-input button:active{background:#c2185b}
+  /* ===== شريط التنقل السفلي ===== */
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100}
+  .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--text-dim);font-size:10px;cursor:pointer;padding:4px 12px;flex:1;position:relative}
+  .nav-item.active{color:var(--gold)}
+  .nav-item .nav-icon{font-size:20px}
+  .nav-item .nav-badge{position:absolute;top:0;left:50%;background:#e74c3c;color:#fff;font-size:9px;padding:1px 4px;border-radius:8px;font-weight:700}
 
-  /* إشعار Toast */
-  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#333;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;transition:transform .3s;z-index:1000;box-shadow:0 4px 20px rgba(0,0,0,.3);max-width:90%}
+  /* ===== الأقسام الأخرى ===== */
+  .empty-state{text-align:center;padding:60px 20px;color:var(--text-dim)}
+  .empty-state .big-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+  .empty-state h3{color:var(--gold);font-size:18px;margin-bottom:8px}
+  .empty-state p{font-size:13px;line-height:1.6}
+
+  /* ===== نافذة التفاصيل ===== */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:flex-end;z-index:200}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--card);width:100%;max-height:85vh;border-radius:24px 24px 0 0;padding:20px;overflow-y:auto;animation:slideUp .3s ease}
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+  .modal h2{color:var(--gold);font-size:20px;margin-bottom:4px}
+  .modal .sub{color:var(--text-dim);font-size:13px;margin-bottom:16px}
+  .modal-details{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+  .modal-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+  .modal-row .label{color:var(--text-dim)}
+  .modal-row .value{color:var(--text);font-weight:600}
+  .modal-actions{display:flex;gap:10px;position:sticky;bottom:0;background:var(--card);padding-top:10px}
+  .btn-close-modal{width:100%;padding:14px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:14px;cursor:pointer}
+
+  /* ===== Toast ===== */
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--gold);color:#000;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:600;transition:transform .3s;z-index:300;box-shadow:0 4px 20px rgba(212,175,55,.3);max-width:90%;text-align:center}
   .toast.show{transform:translateX(-50%) translateY(0)}
-
-  /* شاشة التثبيت */
-  .install-banner{position:fixed;bottom:16px;left:16px;right:16px;background:#fff;padding:14px;border-radius:14px;box-shadow:0 6px 25px rgba(0,0,0,.2);display:none;align-items:center;gap:12px;z-index:999}
-  .install-banner.show{display:flex}
-  .install-banner button{background:#e91e63;color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer}
-  .install-banner .close{background:none;color:#999;font-size:20px;padding:4px 8px}
 </style>
 </head>
 <body>
 
-<!-- شاشة الدخول -->
-<div id="loginScreen" class="screen login active">
-  <h1>❤️ زواج</h1>
-  <p>نموذج تجريبي PWA</p>
-
-  <button class="btn btn-google" onclick="login('جوجل')">
-    <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-    المتابعة بجوجل
-  </button>
-
-  <button class="btn btn-facebook" onclick="login('فيسبوك')">
-    <svg viewBox="0 0 24 24" fill="white"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
-    المتابعة بفيسبوك
-  </button>
-
-  <button class="btn btn-telegram" onclick="login('تيليجرام')">
-    <svg viewBox="0 0 24 24" fill="white"><path d="M11.94 0C5.35 0 0 5.35 0 11.94s5.35 11.94 11.94 11.94 11.94-5.35 11.94-11.94S18.53 0 11.94 0zm5.85 8.16l-1.97 9.28c-.15.66-.54.82-1.09.51l-3-2.21-1.45 1.4c-.16.16-.3.3-.6.3l.21-3.05 5.56-5.02c.24-.21-.05-.33-.37-.12l-6.87 4.33-2.96-.93c-.64-.2-.66-.64.13-.95l11.57-4.46c.53-.19 1 .13.83.92z"/></svg>
-    المتابعة بتيليجرام
-  </button>
-</div>
-
-<!-- التطبيق -->
-<div id="appScreen" class="screen">
-  <div class="app-header">
-    <h2>❤️ زواج</h2>
-    <button class="notif-btn" onclick="askNotification()">🔔 إشعار</button>
+<!-- ===== الشاشة الرئيسية ===== -->
+<div id="mainScreen" class="screen active">
+  <div class="top-bar">
+    <div class="brand">❤️ منصة زواج</div>
+    <div class="actions">
+      <button class="icon-btn" onclick="showToast('تصفية متقدمة قريباً')">⚙️</button>
+      <button class="icon-btn" onclick="showToast('بحث قريباً')">🔍</button>
+      <button class="icon-btn" onclick="showSection('notifications')">
+        🔔<span class="badge">1</span>
+      </button>
+    </div>
   </div>
 
-  <div id="profilesList" class="profiles"></div>
+  <div class="content" id="contentArea">
+    <!-- سيتم تعبئة المحتوى هنا عبر JavaScript -->
+  </div>
 
-  <div id="chatView" class="chat">
-    <div class="app-header">
-      <div class="chat-header-info">
-        <button class="back-btn" onclick="closeChat()">→</button>
-        <div class="chat-avatar" id="chatAvatar">👤</div>
-        <div>
-          <div style="font-size:15px;font-weight:600" id="chatName">اسم</div>
-          <div style="font-size:11px;opacity:.8">متصل الآن</div>
-        </div>
-      </div>
-    </div>
-    <div id="messages" class="messages"></div>
-    <div class="chat-input">
-      <input id="msgInput" type="text" placeholder="اكتب رسالة..." onkeypress="if(event.key==='Enter') sendMsg()">
-      <button onclick="sendMsg()">إرسال</button>
-    </div>
+  <div class="bottom-nav">
+    <button class="nav-item active" onclick="showSection('browse')" data-section="browse">
+      <span class="nav-icon">🔍</span><span>استعراض</span>
+    </button>
+    <button class="nav-item" onclick="showSection('matches')" data-section="matches">
+      <span class="nav-icon">💚</span><span>مطابقاتي</span>
+    </button>
+    <button class="nav-item" onclick="showSection('notifications')" data-section="notifications">
+      <span class="nav-icon">🔔</span><span>الإشعارات</span>
+      <span class="nav-badge">1</span>
+    </button>
+    <button class="nav-item" onclick="showSection('profile')" data-section="profile">
+      <span class="nav-icon">👤</span><span>ملفي</span>
+    </button>
+    <button class="nav-item" onclick="showSection('help')" data-section="help">
+      <span class="nav-icon">❓</span><span>المساعدة</span>
+    </button>
+  </div>
+</div>
+
+<!-- ===== نافذة التفاصيل ===== -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="modalContent"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- بانر التثبيت -->
-<div class="install-banner" id="installBanner">
-  <div style="flex:1">
-    <strong style="font-size:14px">📱 ثبّت التطبيق</strong>
-    <div style="font-size:12px;color:#666;margin-top:2px">أضف زواج لشاشتك الرئيسية</div>
-  </div>
-  <button onclick="installApp()">تثبيت</button>
-  <button class="close" onclick="document.getElementById('installBanner').classList.remove('show')">×</button>
-</div>
-
 <script>
 // ===== بيانات وهمية =====
 const profiles = [
-  { id:1, name:'أحمد', age:28, city:'الرياض', emoji:'👨', bio:'مهندس برمجيات، أحب القراءة' },
-  { id:2, name:'سارة', age:25, city:'جدة', emoji:'👩', bio:'طبيبة أسنان، أحب السفر' },
-  { id:3, name:'خالد', age:32, city:'الدمام', emoji:'🧔', bio:'رجل أعمال، أحب الرياضة' },
-  { id:4, name:'نورة', age:27, city:'مكة', emoji:'👩‍🦰', bio:'معلمة، أحب الطبخ' },
-  { id:5, name:'محمد', age:30, city:'المدينة', emoji:'👨‍💼', bio:'محاسب، أحب التصوير' },
+  { id:'SK-61225', age:25, city:'الرياض', nationality:'المغرب', height:166, weight:52, education:'ماجستير', work:'مهندسة', religion:'سني', polygamy:'غير منفتح على التعدد', emoji:'👩', lastSeen:'قبل ساعة' },
+  { id:'SK-61297', age:23, city:'القاهرة', nationality:'يمنية', height:166, weight:55, education:'بكالوريوس', work:'معلمة', religion:'سني', polygamy:'غير منفتح على التعدد', emoji:'👩‍🦰', lastSeen:'قبل ساعة' },
+  { id:'SK-70953', age:31, city:'الجديدة', nationality:'المغرب', height:170, weight:65, education:'دكتوراه', work:'طبيبة', religion:'سني', polygamy:'غير منفتح على التعدد', emoji:'👩‍⚕️', lastSeen:'قبل 3 ساعات' },
+  { id:'SK-71402', age:28, city:'دبي', nationality:'مصر', height:162, weight:50, education:'بكالوريوس', work:'محاسبة', religion:'سني', polygamy:'غير منفتح على التعدد', emoji:'👩‍💼', lastSeen:'أمس' },
+  { id:'SK-71888', age:26, city:'عمان', nationality:'الأردن', height:168, weight:58, education:'ماجستير', work:'صيدلانية', religion:'سني', polygamy:'غير منفتح على التعدد', emoji:'👩‍🔬', lastSeen:'قبل 30 دقيقة' },
 ];
 
-const replies = [
-  'أهلًا بك! كيف حالك؟ 😊',
-  'يسعدني تواصلك معي.',
-  'هذا نموذج تجريبي فقط 😄',
-  'أخبرني المزيد عنك.',
-  'موضوع شيق! حدثني أكثر.',
-  'شكرًا لرسالتك ❤️'
-];
-
-let currentChat = null;
-let deferredPrompt = null;
+const savedProfiles = new Set();
+const interestedProfiles = new Set();
 
 // ===== Manifest ديناميكي =====
 const manifest = {
-  name: 'زواج تجريبي',
-  short_name: 'زواج',
-  start_url: '.',
-  display: 'standalone',
-  background_color: '#f0f2f5',
-  theme_color: '#e91e63',
-  orientation: 'portrait',
-  icons: [{
-    src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23e91e63'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle' fill='white'%3E%E2%9D%A4%3C/text%3E%3C/svg%3E",
-    sizes: '512x512',
-    type: 'image/svg+xml',
-    purpose: 'any maskable'
-  }]
+  name:'منصة زواج', short_name:'زواج',
+  start_url:'.', display:'standalone',
+  background_color:'#0a0a0a', theme_color:'#0a0a0a',
+  orientation:'portrait',
+  icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a0a0a'/%3E%3Ctext x='50' y='72' font-size='50' text-anchor='middle' fill='%23d4af37'%3E%E2%9D%A4%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]
 };
-const manifestBlob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
-document.getElementById('manifestLink').href = URL.createObjectURL(manifestBlob);
+document.getElementById('manifestLink').href = URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}));
 
-// ===== Service Worker عبر Blob =====
+// ===== Service Worker =====
 if ('serviceWorker' in navigator) {
-  const swCode = `
-    self.addEventListener('install', e => self.skipWaiting());
-    self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
-    self.addEventListener('fetch', e => {
-      e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-    });
-    self.addEventListener('notificationclick', e => {
-      e.notification.close();
-      e.waitUntil(clients.matchAll({type:'window'}).then(list => {
-        for (const c of list) if (c.url && 'focus' in c) return c.focus();
-        if (clients.openWindow) return clients.openWindow('/');
-      }));
-    });
-  `;
-  const swBlob = new Blob([swCode], {type:'application/javascript'});
-  const swUrl = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swUrl).catch(err => console.log('SW:', err.message));
+  const swCode = `self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))});`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode],{type:'application/javascript'}))).catch(()=>{});
 }
 
-// ===== تسجيل الدخول =====
-function login(provider) {
-  showToast('تم الدخول عبر ' + provider + ' ✓');
-  document.getElementById('loginScreen').classList.remove('active');
-  document.getElementById('appScreen').classList.add('active');
-  renderProfiles();
-}
+// ===== التنقل =====
+let currentSection = 'browse';
 
-// ===== عرض الملفات =====
-function renderProfiles() {
-  const list = document.getElementById('profilesList');
-  list.innerHTML = profiles.map(p => `
-    <div class="profile-card" onclick="openChat(${p.id})">
-      <div class="avatar">${p.emoji}</div>
-      <div class="info">
-        <strong>${p.name}، ${p.age}</strong>
-        <small>${p.city} • ${p.bio}</small>
-      </div>
-      <span class="badge">${Math.floor(Math.random()*5)+1} 💬</span>
-    </div>
-  `).join('');
-}
-
-// ===== فتح المحادثة =====
-function openChat(id) {
-  currentChat = profiles.find(p => p.id === id);
-  document.getElementById('profilesList').style.display = 'none';
-  document.getElementById('chatView').classList.add('active');
-  document.getElementById('chatName').textContent = currentChat.name + '، ' + currentChat.age;
-  document.getElementById('chatAvatar').textContent = currentChat.emoji;
-  document.getElementById('messages').innerHTML = '';
-  addMessage('مرحبًا! أنا ' + currentChat.name + ' 👋', 'other');
-}
-
-function closeChat() {
-  document.getElementById('profilesList').style.display = 'grid';
-  document.getElementById('chatView').classList.remove('active');
-}
-
-// ===== الرسائل =====
-function addMessage(text, type) {
-  const div = document.createElement('div');
-  div.className = 'msg ' + type;
-  const time = new Date().toLocaleTimeString('ar', {hour:'2-digit', minute:'2-digit'});
-  div.innerHTML = text + '<span class="msg-time">' + time + '</span>';
-  const box = document.getElementById('messages');
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-
-function showTyping() {
-  const div = document.createElement('div');
-  div.className = 'typing';
-  div.id = 'typingIndicator';
-  div.innerHTML = '<span></span><span></span><span></span>';
-  const box = document.getElementById('messages');
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-
-function hideTyping() {
-  const el = document.getElementById('typingIndicator');
-  if (el) el.remove();
-}
-
-function sendMsg() {
-  const input = document.getElementById('msgInput');
-  const text = input.value.trim();
-  if (!text) return;
-  addMessage(text, 'me');
-  input.value = '';
-
-  showTyping();
-  const delay = 800 + Math.random() * 1200;
-  setTimeout(() => {
-    hideTyping();
-    const reply = replies[Math.floor(Math.random() * replies.length)];
-    addMessage(reply, 'other');
-    // اهتزاز بسيط على الهاتف
-    if (navigator.vibrate) navigator.vibrate(50);
-  }, delay);
-}
-
-// ===== الإشعارات =====
-function askNotification() {
-  if (!('Notification' in window)) {
-    showToast('المتصفح لا يدعم الإشعارات');
-    return;
-  }
-  Notification.requestPermission().then(perm => {
-    if (perm === 'granted') {
-      showToast('تم تفعيل الإشعارات ✓');
-      setTimeout(() => {
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-          navigator.serviceWorker.ready.then(reg => {
-            reg.showNotification('زواج', {
-              body: 'لديك رسالة جديدة من سارة 💬',
-              icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23e91e63'/%3E%3Ctext x='50' y='72' font-size='60' text-anchor='middle' fill='white'%3E%E2%9D%A4%3C/text%3E%3C/svg%3E",
-              vibrate: [200,100,200]
-            });
-          });
-        } else {
-          new Notification('زواج', { body: 'لديك رسالة جديدة 💬' });
-        }
-      }, 1500);
-    } else {
-      showToast('تم رفض الإشعارات');
-    }
+function showSection(section) {
+  currentSection = section;
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.section === section);
   });
+  renderContent();
 }
 
-// ===== Toast =====
+function renderContent() {
+  const area = document.getElementById('contentArea');
+  switch(currentSection) {
+    case 'browse': area.innerHTML = renderBrowse(); break;
+    case 'matches': area.innerHTML = renderEmpty('💚','مطابقاتي','لا توجد مطابقات حتى الآن. أرسل اهتمامك للملفات التي تعجبك.'); break;
+    case 'notifications': area.innerHTML = renderEmpty('🔔','الإشعارات','لديك إشعار جديد: تمت إضافة ملف شخصي جديد.'); break;
+    case 'profile': area.innerHTML = renderProfile(); break;
+    case 'help': area.innerHTML = renderEmpty('❓','المساعدة','للتواصل مع الدعم: support@example.com'); break;
+  }
+}
+
+function renderBrowse() {
+  const cards = profiles.map(p => renderCard(p)).join('');
+  return `
+    <div class="view-header">
+      <h1>ملفات شخصية<br>مجهولة الهوية</h1>
+    </div>
+    <div class="tabs">
+      <div class="tab active">جميع الملفات <span class="count-badge">${profiles.length}</span></div>
+      <div class="tab">قائمتي المختارة <span class="count-badge">${savedProfiles.size}</span></div>
+    </div>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;text-align:center">${profiles.length} ملفاً شخصياً</p>
+    ${cards}
+  `;
+}
+
+function renderCard(p) {
+  const saved = savedProfiles.has(p.id);
+  const interested = interestedProfiles.has(p.id);
+  return `
+    <div class="profile-card" onclick="openModal('${p.id}')">
+      <div class="card-head">
+        <div>
+          <div class="card-id">${p.id}</div>
+          <div class="card-age">${p.age} سنة</div>
+        </div>
+        <div class="card-avatar">${p.emoji}</div>
+      </div>
+      <div style="text-align:center;margin-bottom:8px">
+        <div class="card-location">${p.city}, ${p.nationality}</div>
+        <div class="card-nationality">آخر ظهور ${p.lastSeen}</div>
+      </div>
+      <div class="card-details">
+        <div class="detail"><span class="label">الحالة الاجتماعية</span><span class="value">لم يسبق لها الزواج</span></div>
+        <div class="detail"><span class="label">الطول</span><span class="value">${p.height} سم</span></div>
+        <div class="detail"><span class="label">الوزن</span><span class="value">${p.weight} كجم</span></div>
+        <div class="detail"><span class="label">التعليم</span><span class="value">${p.education}</span></div>
+        <div class="detail"><span class="label">العمل</span><span class="value">${p.work}</span></div>
+        <div class="detail"><span class="label">العقيدة</span><span class="value">${p.religion}</span></div>
+        <div class="detail" style="grid-column:1/-1"><span class="label">تعدد الزوجات</span><span class="value">${p.polygamy}</span></div>
+      </div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="btn-interest" onclick="sendInterest('${p.id}')" ${interested?'style="background:var(--border);color:var(--text-dim)"':''}>
+          ${interested ? '✓ تم الإرسال' : 'إرسال اهتمام'}
+        </button>
+        <button class="btn-save" onclick="toggleSave('${p.id}')" style="${saved?'background:var(--gold-dim);border-color:var(--gold)':''}">
+          ${saved ? '★' : '☆'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function renderEmpty(icon, title, desc) {
+  return `<div class="empty-state"><div class="big-icon">${icon}</div><h3>${title}</h3><p>${desc}</p></div>`;
+}
+
+function renderProfile() {
+  return `
+    <div class="view-header"><h1>ملفي الشخصي</h1></div>
+    <div class="profile-card">
+      <div class="card-head">
+        <div><div class="card-id">SK-00000</div><div class="card-age">أنا</div></div>
+        <div class="card-avatar">👤</div>
+      </div>
+      <div class="card-details">
+        <div class="detail"><span class="label">الحالة</span><span class="value">نشط</span></div>
+        <div class="detail"><span class="label">الإعجابات المستلمة</span><span class="value">0</span></div>
+        <div class="detail"><span class="label">الإعجابات المرسلة</span><span class="value">${interestedProfiles.size}</span></div>
+        <div class="detail"><span class="label">المحفوظات</span><span class="value">${savedProfiles.size}</span></div>
+      </div>
+    </div>
+    <button class="btn-interest" style="margin-top:16px" onclick="showToast('تعديل الملف قريباً')">تعديل الملف الشخصي</button>
+  `;
+}
+
+// ===== التفاعلات =====
+function sendInterest(id) {
+  if (interestedProfiles.has(id)) { showToast('تم إرسال اهتمامك مسبقاً'); return; }
+  interestedProfiles.add(id);
+  showToast('✓ تم إرسال اهتمامك');
+  renderContent();
+}
+
+function toggleSave(id) {
+  if (savedProfiles.has(id)) { savedProfiles.delete(id); showToast('تمت الإزالة من القائمة'); }
+  else { savedProfiles.add(id); showToast('★ تم الحفظ في القائمة المختصرة'); }
+  renderContent();
+}
+
+function openModal(id) {
+  const p = profiles.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modalContent').innerHTML = `
+    <h2>${p.id}</h2>
+    <div class="sub">${p.age} سنة • ${p.city}, ${p.nationality}</div>
+    <div class="modal-details">
+      <div class="modal-row"><span class="label">الحالة الاجتماعية</span><span class="value">لم يسبق لها الزواج</span></div>
+      <div class="modal-row"><span class="label">الطول</span><span class="value">${p.height} سم</span></div>
+      <div class="modal-row"><span class="label">الوزن</span><span class="value">${p.weight} كجم</span></div>
+      <div class="modal-row"><span class="label">التعليم</span><span class="value">${p.education}</span></div>
+      <div class="modal-row"><span class="label">العمل</span><span class="value">${p.work}</span></div>
+      <div class="modal-row"><span class="label">العقيدة</span><span class="value">${p.religion}</span></div>
+      <div class="modal-row"><span class="label">تعدد الزوجات</span><span class="value">${p.polygamy}</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-interest" onclick="sendInterest('${p.id}');closeModal()">إرسال اهتمام</button>
+      <button class="btn-close-modal" onclick="closeModal()">إغلاق</button>
+    </div>
+  `;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// ===== زر التثبيت =====
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('installBanner').classList.add('show');
-});
-
-function installApp() {
-  if (!deferredPrompt) {
-    showToast('افتح قائمة المتصفح واختر «إضافة إلى الشاشة الرئيسية»');
-    return;
-  }
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(() => {
-    deferredPrompt = null;
-    document.getElementById('installBanner').classList.remove('show');
-  });
-}
-
-// إظهار بانر التثبيت على iOS
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-if (isIOS && !isStandalone) {
-  setTimeout(() => document.getElementById('installBanner').classList.add('show'), 3000);
-}
+// ===== تشغيل =====
+renderContent();
 </script>
 </body>
 </html>
