@@ -13,8 +13,6 @@ body{background:#0a0a0a;color:#f0f0f0;overflow:hidden;position:fixed;top:0;left:
 .deck{position:fixed;top:55px;left:0;right:0;bottom:170px;padding:12px}
 .stack{position:absolute;top:12px;left:12px;right:12px;bottom:12px;max-width:400px;margin:0 auto}
 .card{position:absolute;top:0;left:0;right:0;bottom:0;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:20px;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.5);cursor:pointer}
-.card.glow{box-shadow:0 0 0 2px #d4af37, 0 10px 40px rgba(212,175,55,.4)}
-.card.behind{transform:scale(.94) translateY(10px);opacity:.5;pointer-events:none}
 .avatar{width:70px;height:70px;border-radius:50%;border:2px solid #d4af37;display:flex;align-items:center;justify-content:center;background:#141414;font-size:34px;float:left}
 .name{color:#e8c96a;font-size:20px;font-weight:800;text-align:center;margin:10px 0 4px;clear:both}
 .loc{text-align:center;font-size:14px;font-weight:600;margin-bottom:14px}
@@ -116,20 +114,16 @@ function renderStack() {
     stack.innerHTML = '<div class="empty"><h3>انتهت الملفات 🎉</h3><p>شاهدت جميع الملفات.</p><button class="reset" onclick="resetDeck()">إعادة البدء</button></div>';
     return;
   }
-  var html = '';
-  if (a[2]) html += cardHTML(a[2], 'behind');
-  if (a[1]) html += cardHTML(a[1], 'behind');
-  html += cardHTML(a[0], 'top');
-  stack.innerHTML = html;
-  var top = stack.querySelector('.card.top');
+  stack.innerHTML = cardHTML(a[0]);
+  var top = stack.querySelector('.card');
   if (top) swipe(top, a[0]);
 }
 
-function cardHTML(p, pos) {
+function cardHTML(p) {
   var tags = p.marriage.map(function(m){ return '<span style="background:rgba(212,175,55,.15);color:#e8c96a;padding:3px 8px;border-radius:10px;font-size:11px;margin:2px;display:inline-block">' + m + '</span>'; }).join('');
   var name = p.name ? '<div class="name">' + p.name + '</div>' : '<div style="height:10px"></div>';
   var bio = p.bio ? '<div class="bio">"' + p.bio + '"</div>' : '';
-  return '<div class="card ' + pos + '">' +
+  return '<div class="card">' +
     '<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="color:#d4af37;font-size:13px;font-weight:700">' + p.id + '</div><div style="color:#888;font-size:13px;margin-top:2px">' + p.age + ' سنة</div></div><div class="avatar">' + p.emoji + '</div></div>' +
     name +
     '<div class="loc">' + p.city + '، ' + p.country + ' ' + p.flag + '</div>' +
@@ -140,6 +134,7 @@ function cardHTML(p, pos) {
     '<div class="row"><span class="l">💼 المهنة</span><span class="v">' + p.work + '</span></div>' +
     '<div class="row"><span class="l">💍 الزواج</span><span class="v">' + tags + '</span></div>' +
     bio +
+    '<div style="text-align:center;color:#666;font-size:11px;margin-top:16px">👆 اضغط للتفاصيل • اسحب للتفاعل</div>' +
     '</div>';
 }
 
@@ -164,10 +159,8 @@ function swipe(card, p) {
     if (e.type === 'touchmove') e.preventDefault();
     var pt = e.touches ? e.touches[0] : e;
     cx = pt.clientX - sx;
-    cy = pt.clientY - sx;
     if (Math.abs(cx) > 5) moved = true;
-    card.style.transform = 'translate(' + cx + 'px,' + (cy/3) + 'px) rotate(' + (cx/18) + 'deg)';
-    card.classList.remove('glow');
+    card.style.transform = 'translate(' + cx + 'px,' + (cx/20) + 'px) rotate(' + (cx/18) + 'deg)';
     if (cx > 50) card.style.boxShadow = '0 0 30px #22c55e';
     else if (cx < -50) card.style.boxShadow = '0 0 30px #ef4444';
     else card.style.boxShadow = '';
@@ -198,8 +191,8 @@ function swipeOut(card, dir, p) {
   }, 350);
 }
 
-function likeTop() { var a = avail(); if(!a.length) return; var c = document.querySelector('.card.top'); if(c) swipeOut(c,'right',a[0]); }
-function skipTop() { var a = avail(); if(!a.length) return; var c = document.querySelector('.card.top'); if(c) swipeOut(c,'left',a[0]); }
+function likeTop() { var a = avail(); if(!a.length) return; var c = document.querySelector('.card'); if(c) swipeOut(c,'right',a[0]); }
+function skipTop() { var a = avail(); if(!a.length) return; var c = document.querySelector('.card'); if(c) swipeOut(c,'left',a[0]); }
 
 function resetDeck() { liked=[]; skipped=[]; renderStack(); toast('تم إعادة البدء'); }
 
